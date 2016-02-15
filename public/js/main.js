@@ -19020,99 +19020,115 @@ module.exports = require('./lib/React');
 
 },{"./lib/React":53}],159:[function(require,module,exports){
 var React = require('react');
-var ListItem = require('./ListItem.jsx');
+var Square = require('./square.jsx');
 
-var List = React.createClass({
-	displayName: 'List',
+var Grid = React.createClass({
+  displayName: 'Grid',
 
-	render: function () {
-		var createItem = function (text, index) {
-			return React.createElement(ListItem, { key: index + text, text: text });
-		};
-		return React.createElement(
-			'ul',
-			null,
-			this.props.items.map(createItem)
-		);
-	}
+  getInitialState: function () {
+    return {
+      array: [],
+      height: 30,
+      width: 60
+    };
+  },
+  componentWillMount: function () {
+    //blank grid
+    var array = this.state.array;
+    for (var i = 0; i < this.state.height; i++) {
+      array[i] = new Array();
+      for (var j = 0; j < this.state.width; j++) {
+        array[i][j] = 0;
+      }
+    }
+    //add rooms
+    var stateWidth = this.state.width;
+    var stateHeight = this.state.height;
+    var createRoom = function (array) {
+      console.log('createRoom');
+      //pick random room size
+      var width = Math.floor(Math.random() * 13) + 5;
+      var height = Math.floor(Math.random() * 13) + 5;
+      console.log(width, height);
+      //pick random starting corner
+      var xStart = Math.floor(Math.random() * (stateWidth - width) + 1);
+      var yStart = Math.floor(Math.random() * (stateHeight - height) + 1);
+      console.log('start point', xStart, yStart);
+      //check if spot is available
+      var test = 0;
+      for (var i = yStart; i < yStart + height; i++) {
+        for (var m = xStart; m < xStart + width; m++) {
+          if (array[i]) {
+            if (array[i][m] === 1 || array[i][m] === undefined) {
+              test = 1;
+            }
+          }
+        }
+      }
+      if (test === 0) {
+        for (var j = yStart + 1; j < yStart + height - 1; j++) {
+          for (var k = xStart + 1; k < xStart + width - 1; k++) {
+            array[j].splice(k, 1, 1);
+            console.log('room added');
+          }
+        }
+      }
+    };
+    var createMultipleRooms = function () {
+      for (var x = 0; x < 100; x++) {
+        createRoom(array);
+        console.log('array', array);
+      }
+    };
+    createMultipleRooms();
+    //createRoom();
+    this.setState({ array: array });
+  },
+  render: function () {
+    var generateSquares = this.state.array.map(function (item, index) {
+      var xindex = index;
+      return React.createElement(
+        'div',
+        { className: 'squareRow' },
+        item.map(function (y, index) {
+          var newId = xindex.toString() + "-" + index.toString();
+          return React.createElement(Square, { key: newId, identification: newId, className: 'square', value: y });
+        })
+      );
+    });
+
+    return React.createElement(
+      'div',
+      null,
+      generateSquares
+    );
+  }
 });
 
-module.exports = List;
+module.exports = Grid;
 
-},{"./ListItem.jsx":160,"react":158}],160:[function(require,module,exports){
+},{"./square.jsx":160,"react":158}],160:[function(require,module,exports){
 var React = require('react');
 
-var ListItem = React.createClass({
-	displayName: 'ListItem',
+var Square = React.createClass({
+	displayName: 'Square',
 
 	render: function () {
 		return React.createElement(
-			'li',
+			'span',
 			null,
-			React.createElement(
-				'h4',
-				null,
-				this.props.text
-			)
+			this.props.value
 		);
 	}
 });
 
-module.exports = ListItem;
+module.exports = Square;
 
 },{"react":158}],161:[function(require,module,exports){
 var React = require('react');
-var List = require('./List.jsx');
-
-var ListManager = React.createClass({
-	displayName: 'ListManager',
-
-	getInitialState: function () {
-		return {
-			items: [],
-			newItemText: ''
-		};
-	},
-	onChange: function (e) {
-		this.setState({ newItemText: e.target.value });
-	},
-	handleSubmit: function (e) {
-		e.preventDefault();
-		var currentItems = this.state.items;
-		currentItems.push(this.state.newItemText);
-		this.setState({ items: currentItems, newItemText: '' });
-	},
-	render: function () {
-		return React.createElement(
-			'div',
-			null,
-			React.createElement(
-				'h3',
-				null,
-				this.props.title
-			),
-			React.createElement(
-				'form',
-				{ onSubmit: this.handleSubmit },
-				React.createElement('input', { onChange: this.onChange, value: this.state.newItemText }),
-				React.createElement(
-					'button',
-					null,
-					'Add'
-				)
-			),
-			React.createElement(List, { items: this.state.items })
-		);
-	}
-});
-
-module.exports = ListManager;
-
-},{"./List.jsx":159,"react":158}],162:[function(require,module,exports){
-var React = require('react');
 var ReactDOM = require('react-dom');
-var ListManager = require('./components/ListManager.jsx');
+var Grid = require('./components/Grid.jsx');
 
-ReactDOM.render(React.createElement(ListManager, { title: 'Ingredients' }), document.getElementById('ingredients'));
+ReactDOM.render(React.createElement(Grid, null), document.getElementById('grid'));
 
-},{"./components/ListManager.jsx":161,"react":158,"react-dom":29}]},{},[162]);
+},{"./components/Grid.jsx":159,"react":158,"react-dom":29}]},{},[161]);
