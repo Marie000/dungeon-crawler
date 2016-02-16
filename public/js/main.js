@@ -19042,6 +19042,16 @@ var Grid = React.createClass({
       }
     }
     //add rooms
+    var checkNeighbors = function (y, x) {
+      var count = 0;
+      var newarray = [array[x - 1][y - 1], array[x][y - 1], array[x + 1][y - 1], array[x - 1][y], array[x + 1][y], array[x - 1][y + 1], array[x][y + 1], array[x + 1][y + 1]];
+      newarray.map(function (item) {
+        if (item === 1) {
+          count++;
+        }
+      });
+      return count;
+    };
     var stateWidth = this.state.width;
     var stateHeight = this.state.height;
     var createRoom = function (array) {
@@ -19065,6 +19075,7 @@ var Grid = React.createClass({
           }
         }
       }
+      //if the spot is available, create the room.
       if (test === 0) {
         for (var j = yStart + 1; j < yStart + height - 1; j++) {
           for (var k = xStart + 1; k < xStart + width - 1; k++) {
@@ -19072,10 +19083,40 @@ var Grid = React.createClass({
             console.log('room added');
           }
         }
+        //create path
+        //find starting point
+        var choices = [];
+        for (var i = yStart; i < yStart + height; i++) {
+          for (var j = xStart; j < xStart + width; j++) {
+            if (checkNeighbors(j, i) === 3 || checkNeighbors(j, i) === 2) {
+              choices.push([j, i]);
+            }
+          }
+        }
+        //choose randomly through choices
+        var randomChoice = Math.floor(Math.random() * choices.length + 1);
+        var hallwayStart = choices[randomChoice];
+        console.log(hallwayStart);
+        //this point becomes 1
+        array[hallwayStart[1]].splice(hallwayStart[0], 1, 1);
+        //among neighbors equal to zero, choose one to turn to 1
+        var possibleNeighbors = [[hallwayStart[1] + 1, hallwayStart[0]], [hallwayStart[1], hallwayStart[0] + 1], [hallwayStart[1] - 1, hallwayStart[0]], [hallwayStart[1], hallwayStart[0] - 1]];
+        console.log('possibleNeighbors', possibleNeighbors);
+        var availNeighbors = [];
+        for (var i = 0; i < possibleNeighbors.length; i++) {
+          if (array[possibleNeighbors[i][0]][possibleNeighbors[i][1]] === 0) {
+            availNeighbors.push(possibleNeighbors[i]);
+          }
+        }
+        var randomHallway = Math.floor(Math.random() * availNeighbors.length + 1);
+        var hallway = availNeighbors[randomHallway];
+        console.log('hallway', hallway);
+        array[hallway[0]].splice(hallway[1], 1, 1);
+        //repeat (random number of times)
       }
     };
     var createMultipleRooms = function () {
-      for (var x = 0; x < 100; x++) {
+      for (var x = 0; x < 1; x++) {
         createRoom(array);
         console.log('array', array);
       }
@@ -19113,12 +19154,25 @@ var React = require('react');
 var Square = React.createClass({
 	displayName: 'Square',
 
+	getInitialState: function () {
+		return {
+			background: 'black'
+		};
+	},
+	componentWillMount: function () {
+		if (this.props.value === 1) {
+			this.setState({ background: 'white' });
+		}
+	},
 	render: function () {
-		return React.createElement(
-			'span',
-			null,
-			this.props.value
-		);
+		var background = this.state.background;
+		var mystyle = {
+			background: background,
+			width: '10px',
+			height: '10px',
+			display: 'inline-block'
+		};
+		return React.createElement('div', { style: mystyle });
 	}
 });
 
