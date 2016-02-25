@@ -19029,7 +19029,9 @@ var Grid = React.createClass({
         return {
             array: [],
             height: 30,
-            width: 30
+            width: 30,
+            enemies: 5,
+            potions: 5
         };
     },
     componentWillMount: function () {
@@ -19085,7 +19087,6 @@ var Grid = React.createClass({
             var endCol = randomPoints[1][1];
             var beginRow = randomPoints[0][0];
             var endRow = randomPoints[1][0];
-            console.log(beginRow, beginCol, endRow, endCol);
             for (var col = beginCol; col < endCol + 1; col++) {
                 array[beginRow].splice(col, 1, 1);
             }
@@ -19098,14 +19099,39 @@ var Grid = React.createClass({
             for (var row = beginRow; row > endRow; row--) {
                 array[row].splice(endCol, 1, 1);
             }
-            if (Math.random() > 0.5) {
-                randomPoints.splice(0, 1);
-            }
+            randomPoints.splice(0, 1);
             if (randomPoints.length > 1) {
                 createHallways();
             }
         };
         createHallways();
+        //set up player and items
+        var randomOpenSpot = function (newValue) {
+            var openSpots = [];
+            for (var col = 0; col < stateWidth; col++) {
+                for (var row = 0; row < stateHeight; row++) {
+                    if (array[row][col] === 1) openSpots.push([row, col]);
+                }
+            }
+            var random = Math.floor(Math.random() * openSpots.length);
+            var newRow = openSpots[random][0];
+            var newCol = openSpots[random][1];
+            array[newRow].splice(newCol, 1, newValue);
+        };
+        //set up player starting point
+        randomOpenSpot(2);
+        //set up potions
+        for (var x = 0; x < this.state.potions; x++) {
+            randomOpenSpot(3);
+        }
+        //set up weapons
+        randomOpenSpot(4);
+        //set up enemies
+        for (var x = 0; x < this.state.enemies; x++) {
+            randomOpenSpot(5);
+        }
+        //set up portal
+        randomOpenSpot(6);
     },
     render: function () {
         var generateSquares = this.state.array.map(function (item, index) {
@@ -19142,8 +19168,34 @@ var Square = React.createClass({
 		};
 	},
 	componentWillMount: function () {
-		if (this.props.value === 1) {
-			this.setState({ background: 'white' });
+		switch (this.props.value) {
+			case 1:
+				this.setState({ background: 'white' });
+				break;
+
+			case 2:
+				this.setState({ background: 'purple' });
+				break;
+
+			case 3:
+				this.setState({ background: 'green' });
+				break;
+
+			case 4:
+				this.setState({ background: 'orange' });
+				break;
+
+			case 5:
+				this.setState({ background: 'red' });
+				break;
+
+			case 6:
+				this.setState({ background: 'blue' });
+				break;
+
+			case 7:
+				this.setState({ background: 'yellow' });
+				break;
 		}
 	},
 	render: function () {
