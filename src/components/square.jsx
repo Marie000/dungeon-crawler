@@ -15,11 +15,11 @@ var Square = React.createClass({
 		var background = this.state.background
 		var mystyle={
 			background:background,
-			width:'10px',
-			height:'10px',
+			width:'15px',
+			height:'15px',
 			display: 'inline-block',
 		}
-		return <div style={mystyle}></div>
+		return <div style={mystyle} className="square"></div>
 	}
 })
 
