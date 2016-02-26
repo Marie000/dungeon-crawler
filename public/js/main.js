@@ -19034,10 +19034,11 @@ var Grid = React.createClass({
             potions: 5,
             currentRow: 0,
             currentCol: 0,
-            health: 100,
+            health: 50,
             experience: 0,
             strength: 10,
-            enemyStrength: 10
+            enemyStrength: 10,
+            enemyHealth: 10
         };
     },
     componentWillMount: function () {
@@ -19222,13 +19223,37 @@ var Grid = React.createClass({
                 break;
 
             case 5:
-                var battleOutcome = Math.floor(Math.random());
+                var battleStrength = Math.floor(Math.random() * (this.state.strength + 1)) + this.state.strength;
+                var enemyDefense = Math.floor(Math.random() * (this.state.enemyStrength + 1)) + this.state.enemyStrength;
+                var battleOutcome = battleStrength - enemyDefense;
+                console.log(battleOutcome);
+                if (battleOutcome > 0) {
+                    newEnemyHealth = this.state.enemyHealth - battleOutcome;
+                    this.setState({ enemyHealth: newEnemyHealth });
+                    if (this.state.enemyHealth <= 0) {
+                        array[currentRow].splice(currentCol, 1, 1);
+                        array[targetRow].splice(targetCol, 1, 2);
+                        var newExp = this.state.experience + 10;
+                        this.setState({ currentCol: targetCol, currentRow: targetRow, array: array,
+                            experience: newExp, enemyHealth: 10 });
+                    }
+                }
+                if (battleOutcome < 0) {
+                    newHealth = this.state.health + battleOutcome;
+                    this.setState({ health: newHealth });
+                    if (this.state.health <= 0) {
+                        alert("game over!");
+                    }
+                }
+                break;
         }
     },
     componentDidUpdate: function () {
         console.log('componentDidUpdate');
     },
     render: function () {
+        var currentRow = this.state.currentRow;
+        var currentCol = this.state.currentCol;
         var generateSquares = this.state.array.map(function (item, index) {
             var xindex = index;
             return React.createElement(
@@ -19236,7 +19261,14 @@ var Grid = React.createClass({
                 { className: 'squareRow' },
                 item.map(function (y, index) {
                     var newId = xindex.toString() + "-" + index.toString();
-                    return React.createElement(Square, { key: newId, identification: newId, className: 'square', value: y });
+                    var visibility = false;
+                    var verticalDistance = xindex - currentRow;
+                    var horizontalDistance = index - currentCol;
+                    if (verticalDistance < 5 && verticalDistance > -5 && horizontalDistance < 5 && horizontalDistance > -5) {
+                        visibility = true;
+                        console.log('visible');
+                    }
+                    return React.createElement(Square, { key: newId, identification: newId, className: 'square', value: y, visibility: visibility });
                 })
             );
         });
@@ -19247,12 +19279,20 @@ var Grid = React.createClass({
             React.createElement(
                 'h2',
                 null,
+                'player health: ',
                 this.state.health
             ),
             React.createElement(
                 'h2',
                 null,
+                'player strength: ',
                 this.state.strength
+            ),
+            React.createElement(
+                'h2',
+                null,
+                'enemy health: ',
+                this.state.enemyHealth
             ),
             generateSquares
         );
@@ -19265,84 +19305,54 @@ module.exports = Grid;
 var React = require('react');
 
 var Square = React.createClass({
-			displayName: 'Square',
+			displayName: "Square",
 
-			getInitialState: function () {
-						return {
-									background: 'black'
-						};
-			},
-			componentWillMount: function () {
-						switch (this.props.value) {
-									case 1:
-												this.setState({ background: 'white' });
-												break;
-
-									case 2:
-												this.setState({ background: 'purple' });
-												break;
-
-									case 3:
-												this.setState({ background: 'green' });
-												break;
-
-									case 4:
-												this.setState({ background: 'orange' });
-												break;
-
-									case 5:
-												this.setState({ background: 'red' });
-												break;
-
-									case 6:
-												this.setState({ background: 'blue' });
-												break;
-
-									case 7:
-												this.setState({ background: 'yellow' });
-												break;
-						}
-			},
-			componentWillReceiveProps: function () {
-						switch (this.props.value) {
-									case 1:
-												this.setState({ background: 'white' });
-												break;
-
-									case 2:
-												this.setState({ background: 'purple' });
-												break;
-
-									case 3:
-												this.setState({ background: 'green' });
-												break;
-
-									case 4:
-												this.setState({ background: 'orange' });
-												break;
-
-									case 5:
-												this.setState({ background: 'red' });
-												break;
-
-									case 6:
-												this.setState({ background: 'blue' });
-												break;
-
-									case 7:
-												this.setState({ background: 'yellow' });
-												break;
-						}
-			},
 			render: function () {
-						var background = this.state.background;
+						var backgroundColor;
+						if (this.props.visibility) {
+									switch (this.props.value) {
+												case 0:
+															backgroundColor = "brown";
+															break;
+
+												case 1:
+															backgroundColor = "white";
+															break;
+
+												case 2:
+															backgroundColor = "purple";
+															break;
+
+												case 3:
+															backgroundColor = "green";
+															break;
+
+												case 4:
+															backgroundColor = "grey";
+															break;
+
+												case 5:
+															backgroundColor = "yellow";
+															break;
+
+												case 6:
+															backgroundColor = "orange";
+															break;
+
+												case 7:
+															backgroundColor = "red";
+															break;
+									}
+						} else {
+									backgroundColor = "black";
+						}
 						var mystyle = {
-									background: background,
+									background: backgroundColor,
 									width: '15px',
 									height: '15px',
 									display: 'inline-block'
 						};
-						return React.createElement('div', { style: mystyle, className: 'square' });
+						return React.createElement("div", { style: mystyle, className: "square" });
 			}
 });
 

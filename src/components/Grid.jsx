@@ -11,10 +11,11 @@ var Grid = React.createClass({
             potions:5,
             currentRow:0,
             currentCol:0,
-            health:100,
+            health:50,
             experience:0,
             strength:10,
-            enemyStrength:10
+            enemyStrength:10,
+            enemyHealth:10
 		}
 	},
 	componentWillMount:function(){
@@ -201,25 +202,57 @@ var Grid = React.createClass({
             break;   
 
             case 5:
-            var battleOutcome=Math.floor(Math.random())         
+            var battleStrength = Math.floor(Math.random()*(this.state.strength+1))+this.state.strength;
+            var enemyDefense = Math.floor(Math.random()*(this.state.enemyStrength+1))+this.state.enemyStrength;
+            var battleOutcome=battleStrength-enemyDefense;
+            console.log(battleOutcome);
+            if(battleOutcome>0){
+                newEnemyHealth=this.state.enemyHealth-battleOutcome;
+                this.setState({enemyHealth:newEnemyHealth});
+                if(this.state.enemyHealth<=0){
+                    array[currentRow].splice(currentCol,1,1)
+                    array[targetRow].splice(targetCol,1,2)
+                    var newExp=this.state.experience+10
+                    this.setState({currentCol:targetCol,currentRow:targetRow,array:array,
+                        experience:newExp,enemyHealth:10})
+                }
+            }
+            if(battleOutcome<0){
+                newHealth=this.state.health+battleOutcome;
+                this.setState({health:newHealth});
+                if(this.state.health<=0){
+                    alert("game over!")
+                }
+            }
+            break;
         }
     },
     componentDidUpdate:function(){
         console.log('componentDidUpdate')
     },
 	render: function(){
-    var generateSquares = this.state.array.map(function(item,index){
+        var currentRow = this.state.currentRow;
+        var currentCol = this.state.currentCol;
+        var generateSquares = this.state.array.map(function(item,index){
         var xindex = index;
         return <div className="squareRow" >
-        {item.map(function(y,index){
-            var newId=xindex.toString()+"-"+index.toString();
-            return <Square key={newId} identification={newId} className="square" value={y}/>    
+            {item.map(function(y,index){
+                var newId=xindex.toString()+"-"+index.toString();
+                var visibility=false;
+                var verticalDistance = xindex-currentRow;
+                var horizontalDistance = index-currentCol;
+                if((verticalDistance<5 && verticalDistance>-5)&&(horizontalDistance<5&&horizontalDistance>-5)){
+                    visibility=true;
+                    console.log('visible')
+                }
+                return <Square key={newId} identification={newId} className="square" value={y} visibility={visibility}/>    
         })}</div>
     });
 
 		return <div>
-        <h2>{this.state.health}</h2>
-        <h2>{this.state.strength}</h2>
+        <h2>player health: {this.state.health}</h2>
+        <h2>player strength: {this.state.strength}</h2>
+        <h2>enemy health: {this.state.enemyHealth}</h2>
         {generateSquares}</div>
 	}
 })
