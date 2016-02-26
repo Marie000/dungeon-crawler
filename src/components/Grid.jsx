@@ -8,7 +8,13 @@ var Grid = React.createClass({
 			height:30,
 			width:30,
             enemies:5,
-            potions:5
+            potions:5,
+            currentRow:0,
+            currentCol:0,
+            health:100,
+            experience:0,
+            strength:10,
+            enemyStrength:10
 		}
 	},
 	componentWillMount:function(){
@@ -98,6 +104,18 @@ var Grid = React.createClass({
         }
         //set up player starting point
         randomOpenSpot(2);
+        var startCol;
+        var startRow;
+        for (var col=0;col<stateWidth;col++){
+                for (var row=0;row<stateHeight;row++){
+                    if (array[row][col]===2){
+                        startCol=col;
+                        startRow=row;
+                    }
+                }
+            }
+        console.log(startRow)
+        this.setState({currentCol:startCol,currentRow:startRow})
         //set up potions
         for (var x=0;x<this.state.potions;x++){
             randomOpenSpot(3);
@@ -110,18 +128,99 @@ var Grid = React.createClass({
         }        
         //set up portal
         randomOpenSpot(6)
+
+        this.setState({array:array})
+    },
+    componentDidMount:function(){
+        var Move = this.move
+        document.body.addEventListener('keydown',function(e){
+            console.log(e.keyCode)
+        switch(e.keyCode){
+            case 38:
+            Move('up')
+            break;
+        
+            case 40:
+            Move('down')
+            break;
+
+            case 37:
+            Move('left')
+            break;
+
+            case 39:
+            Move('right')
+            break;
+        }
+
+        })
+    },
+    move:function(direction){
+        var array = this.state.array;
+        var currentRow=this.state.currentRow;
+        var currentCol=this.state.currentCol;
+        var targetCol;
+        var targetRow;
+        if(direction==="up"){
+            targetRow=currentRow-1;
+            targetCol=currentCol;
+        }
+        if(direction==="down"){
+            targetRow=currentRow+1;
+            targetCol=currentCol; 
+        }
+        if(direction==="left"){
+            targetRow=currentRow;
+            targetCol=currentCol-1;           
+        }
+        if(direction==="right"){
+            targetRow=currentRow;
+            targetCol=currentCol+1;
+        }
+        //if space is empty, move there
+        switch(array[targetRow][targetCol]){
+            case 1:
+            console.log('move')
+            array[currentRow].splice(currentCol,1,1)
+            array[targetRow].splice(targetCol,1,2)
+            this.setState({currentCol:targetCol,currentRow:targetRow,array:array})
+            break;
+
+            case 3:
+            array[currentRow].splice(currentCol,1,1)
+            array[targetRow].splice(targetCol,1,2)
+            var newhealth = this.state.health+30
+            this.setState({currentCol:targetCol,currentRow:targetRow,array:array,health:newhealth})
+            break;
+
+            case 4:
+            array[currentRow].splice(currentCol,1,1)
+            array[targetRow].splice(targetCol,1,2)
+            var newstrength = this.state.strength+10
+            this.setState({currentCol:targetCol,currentRow:targetRow,array:array,strength:newstrength})
+            break;   
+
+            case 5:
+            var battleOutcome=Math.floor(Math.random())         
+        }
+    },
+    componentDidUpdate:function(){
+        console.log('componentDidUpdate')
     },
 	render: function(){
     var generateSquares = this.state.array.map(function(item,index){
         var xindex = index;
-        return <div className="squareRow">
+        return <div className="squareRow" >
         {item.map(function(y,index){
             var newId=xindex.toString()+"-"+index.toString();
             return <Square key={newId} identification={newId} className="square" value={y}/>    
         })}</div>
     });
 
-		return <div>{generateSquares}</div>
+		return <div>
+        <h2>{this.state.health}</h2>
+        <h2>{this.state.strength}</h2>
+        {generateSquares}</div>
 	}
 })
 
