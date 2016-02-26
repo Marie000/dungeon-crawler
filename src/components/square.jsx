@@ -30,7 +30,7 @@ var Square = React.createClass({
 			break;
 
 			case 6:
-			backgroundColor="orange"
+			backgroundColor="blue"
 			break;
 
 			case 7:

@@ -1,5 +1,8 @@
 var React = require('react');
-var Square = require('./square.jsx')
+var Square = require('./square.jsx');
+var Reflux = require ('reflux');
+var Actions = require ('../reflux/actions.jsx');
+var DungeonStore = require ('../reflux/dungeon-store.jsx');
 
 var Grid = React.createClass({
 	getInitialState:function(){
@@ -15,34 +18,35 @@ var Grid = React.createClass({
             experience:0,
             strength:10,
             enemyStrength:10,
-            enemyHealth:10
+            enemyHealth:10,
+            level:1
 		}
 	},
-	componentWillMount:function(){
-		//blank grid
-		var array = this.state.array;
-		for (var i=0;i<this.state.height;i++) {
-    	 	array[i]=new Array();
-      		for (var j=0;j<this.state.width;j++) {
-        		array[i][j]=0
-      		}
-    	}
+    createMap:function(){
+        //blank grid
+        var array = this.state.array;
+        for (var i=0;i<this.state.height;i++) {
+            array[i]=new Array();
+            for (var j=0;j<this.state.width;j++) {
+                array[i][j]=0
+            }
+        }
         var stateWidth = this.state.width;
         var stateHeight = this.state.height;
-    	var randomPoints = []
-    	var createRoom = function(){
+        var randomPoints = []
+        var createRoom = function(){
             var height=Math.floor(Math.random()*10)+5;
             var width=Math.floor(Math.random()*10)+5;
             var startRow=Math.floor(Math.random()*(stateHeight-height+1))+1
             var startCol=Math.floor(Math.random()*(stateWidth-width+1))+1
-    	   //check if spot is available
-    	   var test =0;
-        	for (var row=startRow; row<startRow+height; row++){
+           //check if spot is available
+           var test =0;
+            for (var row=startRow; row<startRow+height; row++){
                 for (var col=startCol; col<startCol+width; col++){
                     if(array[row]){  
                         if (array[row][col]===1 || array[row][col]===undefined){
-    				        test++;
-    				    }
+                            test++;
+                        }
                     }
                 }
             }
@@ -52,7 +56,7 @@ var Grid = React.createClass({
                 for (var row=startRow+1; row<startRow+height-1;row++){
                     if(array[row]){
                     for (var col=startCol+1; col<startCol+width-1;col++){
-    				    array[row].splice(col,1,1)
+                        array[row].splice(col,1,1)
                         list.push([row,col])
                     }
                 }
@@ -115,7 +119,6 @@ var Grid = React.createClass({
                     }
                 }
             }
-        console.log(startRow)
         this.setState({currentCol:startCol,currentRow:startRow})
         //set up potions
         for (var x=0;x<this.state.potions;x++){
@@ -128,14 +131,21 @@ var Grid = React.createClass({
             randomOpenSpot(5);
         }        
         //set up portal
+        if(this.state.level<3){
         randomOpenSpot(6)
-
+        }
+        //set up big boss
+        if(this.state.level===3){
+            randomOpenSpot(7)
+        }
         this.setState({array:array})
+    },
+	componentWillMount:function(){
+        this.createMap();
     },
     componentDidMount:function(){
         var Move = this.move
         document.body.addEventListener('keydown',function(e){
-            console.log(e.keyCode)
         switch(e.keyCode){
             case 38:
             Move('up')
@@ -181,7 +191,6 @@ var Grid = React.createClass({
         //if space is empty, move there
         switch(array[targetRow][targetCol]){
             case 1:
-            console.log('move')
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
             this.setState({currentCol:targetCol,currentRow:targetRow,array:array})
@@ -205,7 +214,6 @@ var Grid = React.createClass({
             var battleStrength = Math.floor(Math.random()*(this.state.strength+1))+this.state.strength;
             var enemyDefense = Math.floor(Math.random()*(this.state.enemyStrength+1))+this.state.enemyStrength;
             var battleOutcome=battleStrength-enemyDefense;
-            console.log(battleOutcome);
             if(battleOutcome>0){
                 newEnemyHealth=this.state.enemyHealth-battleOutcome;
                 this.setState({enemyHealth:newEnemyHealth});
@@ -225,10 +233,17 @@ var Grid = React.createClass({
                 }
             }
             break;
-        }
-    },
-    componentDidUpdate:function(){
-        console.log('componentDidUpdate')
+
+            case 6:
+            var newLevel = this.state.level+1
+            var newEnemyStrength = this.state.enemyStrength+5;
+            var newEnemies = this.state.enemies+2;
+            var newPotions = this.state.potions-1;
+            this.setState({level:newLevel,enemyStrength:newEnemyStrength,enemies:newEnemies,potions:newPotions})
+            this.createMap();
+            break;
+
+            }
     },
 	render: function(){
         var currentRow = this.state.currentRow;
@@ -243,7 +258,6 @@ var Grid = React.createClass({
                 var horizontalDistance = index-currentCol;
                 if((verticalDistance<5 && verticalDistance>-5)&&(horizontalDistance<5&&horizontalDistance>-5)){
                     visibility=true;
-                    console.log('visible')
                 }
                 return <Square key={newId} identification={newId} className="square" value={y} visibility={visibility}/>    
         })}</div>
@@ -253,6 +267,7 @@ var Grid = React.createClass({
         <h2>player health: {this.state.health}</h2>
         <h2>player strength: {this.state.strength}</h2>
         <h2>enemy health: {this.state.enemyHealth}</h2>
+        <h2>Level: {this.state.level}</h2>
         {generateSquares}</div>
 	}
 })
