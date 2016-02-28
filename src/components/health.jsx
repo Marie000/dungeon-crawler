@@ -25,7 +25,14 @@ var Health = React.createClass({
 		var healthDisplay;
 		var character=this.props.character;
 		if(this.props.character==='enemy' && this.props.near===false && this.props.nearDragon===false){
-			return <span></span>
+			return <span className="health">
+			<img src='images/heart_empty.png' /> 
+			<img src='images/heart_empty.png' />
+			<img src='images/heart_empty.png' />
+			<img src='images/heart_empty.png' />
+			<img src='images/heart_empty.png' />
+			<img src='images/heart_empty.png' />
+			</span>
 		}
 		else {
 		switch(health){

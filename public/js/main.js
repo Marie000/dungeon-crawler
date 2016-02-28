@@ -20527,13 +20527,13 @@ var Grid = React.createClass({
     },
     startPrincess: function () {
         this.setState({
-            character: 'princess', experience: 0, playerLevel: 1, strength: 15
+            character: 'princess', experience: 0, playerLevel: 1, strength: 17
         });
         this.startGame();
     },
     startSoldier: function () {
         this.setState({
-            character: 'soldier', experience: 50, playerLevel: 2, strength: 25
+            character: 'soldier', experience: 50, playerLevel: 2, strength: 20
         });
         this.startGame();
     },
@@ -20609,9 +20609,9 @@ var Grid = React.createClass({
             case 4:
                 array[currentRow].splice(currentCol, 1, 1);
                 array[targetRow].splice(targetCol, 1, 2);
-                var newstrength = this.state.strength + 8;
+                var newstrength = this.state.strength + 5;
                 if (this.state.character === 'wizard') {
-                    newStrength += 5;
+                    newStrength += 3;
                 }
                 var newWeapon;
                 switch (this.state.level) {
@@ -20649,7 +20649,7 @@ var Grid = React.createClass({
                         var newStrength = this.state.strength;
                         var strength = this.state.strength;
                         if (newPlayerLevel > this.state.playerLevel) {
-                            newStrength = strength + 10;
+                            newStrength = strength + 5;
                         }
                         this.setState({ currentCol: targetCol, currentRow: targetRow, array: array,
                             experience: newExp, enemyHealth: 10, playerLevel: newPlayerLevel, strength: newStrength });
@@ -20667,7 +20667,7 @@ var Grid = React.createClass({
             //portal (on level 1 and 2)
             case 6:
                 var newLevel = this.state.level + 1;
-                var newEnemyStrength = this.state.enemyStrength + 25;
+                var newEnemyStrength = this.state.enemyStrength + 22;
                 var newEnemies = this.state.enemies + 2;
                 var newPotions = this.state.potions - 1;
                 var newEnemyHealth = 20;
@@ -20880,9 +20880,13 @@ var Grid = React.createClass({
                         { className: 'header' },
                         'Health: ',
                         React.createElement(Health, { health: this.state.health, character: this.state.character }),
-                        'Enemy Health:',
-                        React.createElement(Health, { health: this.state.enemyHealth, character: 'enemy',
-                            near: nearEnemy, nearDragon: nearDragon, className: 'enemyHealth', level: this.state.level }),
+                        React.createElement(
+                            'span',
+                            { className: 'enemyHealth' },
+                            'Enemy Health:',
+                            React.createElement(Health, { health: this.state.enemyHealth, character: 'enemy',
+                                near: nearEnemy, nearDragon: nearDragon, level: this.state.level })
+                        ),
                         React.createElement('br', null),
                         React.createElement(Level, { level: this.state.playerLevel }),
                         React.createElement(Weapon, { weapon: this.state.weapon, character: this.state.character })
@@ -20984,7 +20988,16 @@ var Health = React.createClass({
 						var healthDisplay;
 						var character = this.props.character;
 						if (this.props.character === 'enemy' && this.props.near === false && this.props.nearDragon === false) {
-									return React.createElement('span', null);
+									return React.createElement(
+												'span',
+												{ className: 'health' },
+												React.createElement('img', { src: 'images/heart_empty.png' }),
+												React.createElement('img', { src: 'images/heart_empty.png' }),
+												React.createElement('img', { src: 'images/heart_empty.png' }),
+												React.createElement('img', { src: 'images/heart_empty.png' }),
+												React.createElement('img', { src: 'images/heart_empty.png' }),
+												React.createElement('img', { src: 'images/heart_empty.png' })
+									);
 						} else {
 									switch (health) {
 												case 0:
