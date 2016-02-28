@@ -3,6 +3,8 @@ var Square = require('./square.jsx');
 var Reflux = require ('reflux');
 var Actions = require ('../reflux/actions.jsx');
 var DungeonStore = require ('../reflux/dungeon-store.jsx');
+var Health = require ('./health.jsx');
+var Level = require ('./level.jsx');
 
 var Grid = React.createClass({
 	getInitialState:function(){
@@ -20,6 +22,7 @@ var Grid = React.createClass({
             enemyStrength:12,
             enemyHealth:10,
             level:1,
+            bossStrength:60,
             bossHealth:30,
             playerLevel:1
 		}
@@ -263,7 +266,7 @@ var Grid = React.createClass({
             //big boss (on level 3)
             case 7:
             var battleStrength = Math.floor(Math.random()*(this.state.strength+1))+this.state.strength;
-            var enemyDefense = Math.floor(Math.random()*(this.state.enemyStrength+1))+this.state.enemyStrength;
+            var enemyDefense = Math.floor(Math.random()*(this.state.bossStrength+1))+this.state.bossStrength;
             var battleOutcome=battleStrength-enemyDefense;
             if(battleOutcome>0){
                 newBossHealth=this.state.bossHealth-battleOutcome;
@@ -286,27 +289,28 @@ var Grid = React.createClass({
 	render: function(){
         var currentRow = this.state.currentRow;
         var currentCol = this.state.currentCol;
+        var level = this.state.level;
         var generateSquares = this.state.array.map(function(item,index){
         var xindex = index;
         return <div className="squareRow" >
             {item.map(function(y,index){
                 var newId=xindex.toString()+"-"+index.toString();
-                var visibility=true;
-                var verticalDistance = xindex-currentRow;
-                var horizontalDistance = index-currentCol;
-
-                if((verticalDistance<8 && verticalDistance>-8)&&(horizontalDistance<8&&horizontalDistance>-8)){
-                return <Square key={newId} identification={newId} className="square" value={y} visibility={visibility}/>    
+                var visibility=false;
+                var verticalDistance = Math.abs(xindex-currentRow);
+                var horizontalDistance = Math.abs(index-currentCol);
+                if(horizontalDistance+verticalDistance<5){
+                    visibility=true;
+                }
+                if((verticalDistance<8)&&(horizontalDistance<8)){
+                return <Square key={newId} identification={newId} className="square" value={y} 
+                visibility={visibility} level={level}/>    
                 }
         })}</div>
     });
 
-		return <div>
-        <h2>player health: {this.state.health}</h2>
-        <h2>player strength: {this.state.strength}</h2>
-        <h2>enemy health: {this.state.enemyHealth}</h2>
-        <h2>XP: {this.state.experience}</h2>
-        <h2>Player Level: {this.state.playerLevel}</h2>
+		return <div className="display">
+        <Health health={this.state.health} />
+        <Level level={this.state.playerLevel} />
         {generateSquares}</div>
 	}
 })

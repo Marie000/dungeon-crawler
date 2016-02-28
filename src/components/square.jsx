@@ -2,6 +2,7 @@ var React = require ('react');
 
 var Square = React.createClass({
 	render: function(){
+			var level=this.props.level;
 			var backgroundColor='tan';
 			var backgroundImage;
 			if(this.props.visibility){
@@ -21,11 +22,36 @@ var Square = React.createClass({
 			break;
 
 			case 4:
-			backgroundImage="url(images/axe_2_001.png)"
+			switch(level){
+				case 1:
+				backgroundImage="url(images/sword.png)"
+				break;
+
+				case 2:
+				backgroundImage="url(images/mace.png)"
+				break;
+
+				case 3:
+				backgroundImage="url(images/axe.png)"
+				break;
+			}
+
 			break;
 
 			case 5:
-			backgroundImage="url(images/gargoyle.png)"
+			switch(level){
+				case 1:
+				backgroundImage="url(images/goblin.png)"
+				break;
+
+				case 2:
+				backgroundImage="url(images/barbarian.png)"
+				break;
+
+				case 3:
+				backgroundImage="url(images/gargoyle.png)"
+				break;
+			}
 			break;
 
 			case 6:
@@ -33,7 +59,7 @@ var Square = React.createClass({
 			break;
 
 			case 7:
-			backgroundColor="red"
+			backgroundImage="url(images/dragon_1.png)"
 			break;
 		}
 	}

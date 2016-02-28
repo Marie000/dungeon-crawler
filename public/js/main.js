@@ -20349,6 +20349,8 @@ var Square = require('./square.jsx');
 var Reflux = require('reflux');
 var Actions = require('../reflux/actions.jsx');
 var DungeonStore = require('../reflux/dungeon-store.jsx');
+var Health = require('./health.jsx');
+var Level = require('./level.jsx');
 
 var Grid = React.createClass({
     displayName: 'Grid',
@@ -20368,6 +20370,7 @@ var Grid = React.createClass({
             enemyStrength: 12,
             enemyHealth: 10,
             level: 1,
+            bossStrength: 60,
             bossHealth: 30,
             playerLevel: 1
         };
@@ -20608,7 +20611,7 @@ var Grid = React.createClass({
             //big boss (on level 3)
             case 7:
                 var battleStrength = Math.floor(Math.random() * (this.state.strength + 1)) + this.state.strength;
-                var enemyDefense = Math.floor(Math.random() * (this.state.enemyStrength + 1)) + this.state.enemyStrength;
+                var enemyDefense = Math.floor(Math.random() * (this.state.bossStrength + 1)) + this.state.bossStrength;
                 var battleOutcome = battleStrength - enemyDefense;
                 if (battleOutcome > 0) {
                     newBossHealth = this.state.bossHealth - battleOutcome;
@@ -20631,6 +20634,7 @@ var Grid = React.createClass({
     render: function () {
         var currentRow = this.state.currentRow;
         var currentCol = this.state.currentCol;
+        var level = this.state.level;
         var generateSquares = this.state.array.map(function (item, index) {
             var xindex = index;
             return React.createElement(
@@ -20638,12 +20642,15 @@ var Grid = React.createClass({
                 { className: 'squareRow' },
                 item.map(function (y, index) {
                     var newId = xindex.toString() + "-" + index.toString();
-                    var visibility = true;
-                    var verticalDistance = xindex - currentRow;
-                    var horizontalDistance = index - currentCol;
-
-                    if (verticalDistance < 8 && verticalDistance > -8 && horizontalDistance < 8 && horizontalDistance > -8) {
-                        return React.createElement(Square, { key: newId, identification: newId, className: 'square', value: y, visibility: visibility });
+                    var visibility = false;
+                    var verticalDistance = Math.abs(xindex - currentRow);
+                    var horizontalDistance = Math.abs(index - currentCol);
+                    if (horizontalDistance + verticalDistance < 5) {
+                        visibility = true;
+                    }
+                    if (verticalDistance < 8 && horizontalDistance < 8) {
+                        return React.createElement(Square, { key: newId, identification: newId, className: 'square', value: y,
+                            visibility: visibility, level: level });
                     }
                 })
             );
@@ -20651,37 +20658,9 @@ var Grid = React.createClass({
 
         return React.createElement(
             'div',
-            null,
-            React.createElement(
-                'h2',
-                null,
-                'player health: ',
-                this.state.health
-            ),
-            React.createElement(
-                'h2',
-                null,
-                'player strength: ',
-                this.state.strength
-            ),
-            React.createElement(
-                'h2',
-                null,
-                'enemy health: ',
-                this.state.enemyHealth
-            ),
-            React.createElement(
-                'h2',
-                null,
-                'XP: ',
-                this.state.experience
-            ),
-            React.createElement(
-                'h2',
-                null,
-                'Player Level: ',
-                this.state.playerLevel
-            ),
+            { className: 'display' },
+            React.createElement(Health, { health: this.state.health }),
+            React.createElement(Level, { level: this.state.playerLevel }),
             generateSquares
         );
     }
@@ -20689,13 +20668,213 @@ var Grid = React.createClass({
 
 module.exports = Grid;
 
-},{"../reflux/actions.jsx":181,"../reflux/dungeon-store.jsx":182,"./square.jsx":179,"react":159,"reflux":175}],179:[function(require,module,exports){
+},{"../reflux/actions.jsx":183,"../reflux/dungeon-store.jsx":184,"./health.jsx":179,"./level.jsx":180,"./square.jsx":181,"react":159,"reflux":175}],179:[function(require,module,exports){
+var React = require('react');
+
+var Health = React.createClass({
+			displayName: 'Health',
+
+			render: function () {
+						var health = Math.floor(this.props.health / 10);
+						var healthDisplay;
+						switch (health) {
+									case 1:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_half.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' })
+												);
+												break;
+
+									case 2:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' })
+												);
+												break;
+
+									case 3:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_half.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' })
+												);
+												break;
+
+									case 4:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' })
+												);
+												break;
+
+									case 5:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_half.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' })
+												);
+												break;
+
+									case 6:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' })
+												);
+												break;
+
+									case 7:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_half.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' })
+												);
+												break;
+
+									case 8:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_empty.png' })
+												);
+												break;
+
+									case 9:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_half.png' })
+												);
+												break;
+
+									case 10:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' }),
+															React.createElement('img', { src: 'images/heart_full.png' })
+												);
+												break;
+						}
+			}
+});
+
+module.exports = Health;
+
+},{"react":159}],180:[function(require,module,exports){
+var React = require('react');
+
+var Level = React.createClass({
+			displayName: 'Level',
+
+			render: function () {
+						switch (this.props.level) {
+									case 1:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/star.png' })
+												);
+												break;
+
+									case 2:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' })
+												);
+												break;
+
+									case 3:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' })
+												);
+												break;
+
+									case 4:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' })
+												);
+												break;
+
+									case 5:
+												return React.createElement(
+															'div',
+															null,
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' }),
+															React.createElement('img', { src: 'images/star.png' })
+												);
+												break;
+
+						}
+			}
+});
+
+module.exports = Level;
+
+},{"react":159}],181:[function(require,module,exports){
 var React = require('react');
 
 var Square = React.createClass({
 	displayName: 'Square',
 
 	render: function () {
+		var level = this.props.level;
 		var backgroundColor = 'tan';
 		var backgroundImage;
 		if (this.props.visibility) {
@@ -20714,11 +20893,36 @@ var Square = React.createClass({
 					break;
 
 				case 4:
-					backgroundImage = "url(images/axe_2_001.png)";
+					switch (level) {
+						case 1:
+							backgroundImage = "url(images/sword.png)";
+							break;
+
+						case 2:
+							backgroundImage = "url(images/mace.png)";
+							break;
+
+						case 3:
+							backgroundImage = "url(images/axe.png)";
+							break;
+					}
+
 					break;
 
 				case 5:
-					backgroundImage = "url(images/gargoyle.png)";
+					switch (level) {
+						case 1:
+							backgroundImage = "url(images/goblin.png)";
+							break;
+
+						case 2:
+							backgroundImage = "url(images/barbarian.png)";
+							break;
+
+						case 3:
+							backgroundImage = "url(images/gargoyle.png)";
+							break;
+					}
 					break;
 
 				case 6:
@@ -20726,7 +20930,7 @@ var Square = React.createClass({
 					break;
 
 				case 7:
-					backgroundColor = "red";
+					backgroundImage = "url(images/dragon_1.png)";
 					break;
 			}
 		} else {
@@ -20746,7 +20950,7 @@ var Square = React.createClass({
 
 module.exports = Square;
 
-},{"react":159}],180:[function(require,module,exports){
+},{"react":159}],182:[function(require,module,exports){
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Grid = require('./components/Grid.jsx');
@@ -20772,14 +20976,14 @@ var Main = React.createClass({
 
 ReactDOM.render(React.createElement(Main, null), document.getElementById('grid'));
 
-},{"./components/Grid.jsx":178,"./reflux/dungeon-store.jsx":182,"react":159,"react-dom":30,"reflux":175}],181:[function(require,module,exports){
+},{"./components/Grid.jsx":178,"./reflux/dungeon-store.jsx":184,"react":159,"react-dom":30,"reflux":175}],183:[function(require,module,exports){
 var Reflux = require('reflux');
 
 var Actions = Reflux.createActions(['upLevel']);
 
 module.exports = Actions;
 
-},{"reflux":175}],182:[function(require,module,exports){
+},{"reflux":175}],184:[function(require,module,exports){
 var Reflux = require('reflux');
 var Actions = require('./actions.jsx');
 
@@ -20796,4 +21000,4 @@ var DungeonStore = Reflux.createStore({
 
 module.exports = DungeonStore;
 
-},{"./actions.jsx":181,"reflux":175}]},{},[180]);
+},{"./actions.jsx":183,"reflux":175}]},{},[182]);
