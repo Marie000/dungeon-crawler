@@ -82,7 +82,8 @@ var Square = React.createClass({
 		var mystyle={
 			backgroundImage:backgroundImage,
 			backgroundColor:backgroundColor,
-			backgroundSize:'100%',
+			backgroundSize:'contain',
+			backgroundRepeat:'no-repeat',
 			width:'32px',
 			height:'32px',
 			display: 'inline-block',

@@ -20369,7 +20369,7 @@ var Grid = React.createClass({
             health: 100,
             experience: 0,
             strength: 10,
-            enemyStrength: 12,
+            enemyStrength: 14,
             enemyHealth: 10,
             level: 1,
             bossStrength: 80,
@@ -20521,6 +20521,9 @@ var Grid = React.createClass({
             }
         });
     },
+    newGame: function () {
+        this.setState({ stage: 'before' });
+    },
     startPrincess: function () {
         this.setState({
             character: 'princess', experience: 0, playerLevel: 1, strength: 10
@@ -20540,6 +20543,7 @@ var Grid = React.createClass({
         this.startGame();
     },
     startGame: function () {
+        this.createMap();
         this.setState({
             stage: 'game',
             health: 100,
@@ -20727,69 +20731,97 @@ var Grid = React.createClass({
                         'Dungeon Crawler'
                     ),
                     React.createElement(
-                        'h2',
-                        null,
-                        'Welcome to my game!'
-                    ),
-                    React.createElement(
                         'div',
                         { className: 'button' },
                         React.createElement(
-                            'h3',
+                            'h2',
                             null,
-                            'Please choose your character:'
+                            'Please choose your character wisely'
                         ),
                         React.createElement(
-                            'h4',
-                            null,
-                            'Princess'
+                            'div',
+                            { className: 'characterChoice' },
+                            React.createElement(
+                                'h3',
+                                null,
+                                'Princess'
+                            ),
+                            React.createElement('img', { src: 'images/princess_attack_003.png' }),
+                            React.createElement(
+                                'p',
+                                null,
+                                'Higher maximum health',
+                                React.createElement('br', null),
+                                'Less health damage from enemies',
+                                React.createElement('br', null),
+                                'Potions more effective'
+                            ),
+                            React.createElement(
+                                'button',
+                                { onClick: this.startPrincess },
+                                'Choose Princess'
+                            )
                         ),
-                        React.createElement('img', { src: 'images/princess_attack_003.png' }),
+                        React.createElement(
+                            'div',
+                            { className: 'characterChoice' },
+                            React.createElement(
+                                'h3',
+                                null,
+                                'Soldier'
+                            ),
+                            React.createElement('img', { src: 'images/soldier.png' }),
+                            React.createElement(
+                                'p',
+                                null,
+                                'Starts at player level 2'
+                            ),
+                            React.createElement(
+                                'button',
+                                { onClick: this.startSoldier },
+                                'Choose Soldier'
+                            )
+                        ),
+                        React.createElement(
+                            'div',
+                            { className: 'characterChoice' },
+                            React.createElement(
+                                'h3',
+                                null,
+                                'Wizard'
+                            ),
+                            React.createElement('img', { src: 'images/wizard.png' }),
+                            React.createElement(
+                                'p',
+                                null,
+                                'All weapons are magic (extra damage)'
+                            ),
+                            React.createElement(
+                                'button',
+                                { onClick: this.startWizard },
+                                'Choose Wizard'
+                            )
+                        ),
                         React.createElement(
                             'p',
                             null,
-                            'Higher maximum health',
-                            React.createElement('br', null),
-                            'Less health damage from enemies',
-                            React.createElement('br', null),
-                            'Potions more effective'
+                            'Most graphics by Julia McCarthy (',
+                            React.createElement(
+                                'a',
+                                { href: 'http://opengameart.org/users/mobile-game-graphics' },
+                                'Mobile Game Graphics'
+                            ),
+                            ')'
                         ),
-                        React.createElement(
-                            'button',
-                            { onClick: this.startPrincess },
-                            'Choose Princess'
-                        ),
-                        React.createElement(
-                            'h5',
-                            null,
-                            'Soldier'
-                        ),
-                        React.createElement('img', { src: 'images/soldier.png' }),
                         React.createElement(
                             'p',
                             null,
-                            'Starts at player level 2'
-                        ),
-                        React.createElement(
-                            'button',
-                            { onClick: this.startSoldier },
-                            'Choose Soldier'
-                        ),
-                        React.createElement(
-                            'h5',
-                            null,
-                            'Wizard'
-                        ),
-                        React.createElement('img', { src: 'images/wizard.png' }),
-                        React.createElement(
-                            'p',
-                            null,
-                            'All weapons are magic (extra damage)'
-                        ),
-                        React.createElement(
-                            'button',
-                            { onClick: this.startWizard },
-                            'Choose Wizard'
+                            'Additional graphic by ',
+                            React.createElement(
+                                'a',
+                                { href: 'http://calciumtrice.tumblr.com/' },
+                                'Calciumtrice'
+                            )
                         )
                     )
                 );
@@ -20840,12 +20872,13 @@ var Grid = React.createClass({
                         null,
                         'You win!'
                     ),
+                    React.createElement('img', { src: 'images/treasure_chest_001.png', className: 'endImage' }),
                     React.createElement(
                         'div',
-                        { className: 'button' },
+                        { className: 'newButton' },
                         React.createElement(
                             'button',
-                            { onClick: this.startGame },
+                            { onClick: this.newGame },
                             'Play again!'
                         )
                     )
@@ -20866,12 +20899,13 @@ var Grid = React.createClass({
                         null,
                         'You are dead!'
                     ),
+                    React.createElement('img', { src: 'images/tombstone.png', className: 'endImage' }),
                     React.createElement(
                         'div',
-                        { clasName: 'button' },
+                        { clasName: 'newButton' },
                         React.createElement(
                             'button',
-                            { onClick: this.startGame },
+                            { onClick: this.newGame },
                             'Play again!'
                         )
                     )
@@ -21382,7 +21416,8 @@ var Square = React.createClass({
 		var mystyle = {
 			backgroundImage: backgroundImage,
 			backgroundColor: backgroundColor,
-			backgroundSize: '100%',
+			backgroundSize: 'contain',
+			backgroundRepeat: 'no-repeat',
 			width: '32px',
 			height: '32px',
 			display: 'inline-block'

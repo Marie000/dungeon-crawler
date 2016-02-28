@@ -21,7 +21,7 @@ var Grid = React.createClass({
             health:100,
             experience:0,
             strength:10,
-            enemyStrength:12,
+            enemyStrength:14,
             enemyHealth:10,
             level:1,
             bossStrength:80,
@@ -175,6 +175,9 @@ var Grid = React.createClass({
 
         })
     },
+    newGame:function(){
+        this.setState({stage:'before'})
+    },
     startPrincess:function(){
         this.setState({
             character:'princess',experience:0,playerLevel:1,strength:10
@@ -194,6 +197,7 @@ var Grid = React.createClass({
         this.startGame()
     },
     startGame:function(){
+        this.createMap()
         this.setState({
             stage:'game',
             health:100,
@@ -372,24 +376,31 @@ switch(this.state.stage){
     case 'before':
      return <div className="display">
     <h1>Dungeon Crawler</h1>
-        <h2>Welcome to my game!</h2>
         <div className="button">
-            <h3>Please choose your character:</h3>
-                <h4>Princess</h4>
+            <h2>Please choose your character wisely</h2>
+            <div className="characterChoice">
+                <h3>Princess</h3>
                     <img src="images/princess_attack_003.png" />
                        <p>Higher maximum health<br/>
                         Less health damage from enemies<br/>
                         Potions more effective</p>
                      <button onClick={this.startPrincess}>Choose Princess</button>
-                <h5>Soldier</h5>
+            </div>
+            <div className="characterChoice">
+                <h3>Soldier</h3>
                     <img src="images/soldier.png" />
                         <p>Starts at player level 2</p>
                     
                      <button onClick={this.startSoldier}>Choose Soldier</button>
-                <h5>Wizard</h5>
+            </div>
+            <div className="characterChoice">
+                <h3>Wizard</h3>
                     <img src="images/wizard.png" />
                         <p>All weapons are magic (extra damage)</p>
                     <button onClick={this.startWizard}>Choose Wizard</button>
+            </div>
+            <p>Most graphics by Julia McCarthy (<a href="http://opengameart.org/users/mobile-game-graphics">Mobile Game Graphics</a>)</p>
+            <p>Additional graphic by <a href="http://calciumtrice.tumblr.com/">Calciumtrice</a></p>
     </div>
     </div>
     break;
@@ -398,35 +409,37 @@ switch(this.state.stage){
     return <div className="display">
             <h1>Dungeon Crawler</h1>
             <h2>Dungeon Level {this.state.level}</h2>
-        <div className="header">
-        Health: <Health health={this.state.health} character={this.state.character}/>
-        <Level level={this.state.playerLevel} />
-        <Weapon weapon={this.state.weapon} character={this.state.character}/>
-        </div>
-        <div className="grid">
-        {generateSquares}
-        </div>
-        </div>
+                <div className="header">
+                    Health: <Health health={this.state.health} character={this.state.character}/>
+                    <Level level={this.state.playerLevel} />
+                    <Weapon weapon={this.state.weapon} character={this.state.character}/>
+                </div>
+                <div className="grid">
+                    {generateSquares}
+                </div>
+            </div>
         break;
 
     case 'win':
     return <div className="display">
-            <h1>Dungeon Crawler</h1>
-            <h2>You win!</h2>
-            <div className="button">
-               <button onClick={this.startGame}>Play again!</button>
+                <h1>Dungeon Crawler</h1>
+                <h2>You win!</h2>
+                <img src="images/treasure_chest_001.png" className="endImage" />
+                <div className="newButton">
+                    <button onClick={this.newGame}>Play again!</button>
+                </div>
             </div>
-        </div>
     break;
 
     case 'lost':
     return <div className="display">
-    <h1>Dungeon Crawler</h1>
-    <h2>You are dead!</h2>
-    <div clasName="button">
-    <button onClick={this.startGame}>Play again!</button>
-    </div>
-    </div>
+                <h1>Dungeon Crawler</h1>
+                <h2>You are dead!</h2>
+                <img src="images/tombstone.png" className="endImage"/>
+                <div clasName="newButton">
+                    <button onClick={this.newGame}>Play again!</button>
+                </div>
+            </div>
     break;
 }
 
