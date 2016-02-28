@@ -2,35 +2,34 @@ var React = require ('react');
 
 var Square = React.createClass({
 	render: function(){
-			var backgroundColor;
+			var backgroundColor='tan';
+			var backgroundImage;
 			if(this.props.visibility){
 				switch(this.props.value){
 			case 0:
-			backgroundColor="brown"
+			backgroundImage="url(images/wall.png)"
+			backgroundColor="black"
 			break;
 
-			case 1:
-			backgroundColor="white"
-			break;
 
 			case 2:
-			backgroundColor="purple"
+			backgroundImage="url(images/princess_attack_003.png)"
 			break;
 
 			case 3:
-			backgroundColor="green"
+			backgroundImage="url(images/potion_blue.png)"
 			break;
 
 			case 4:
-			backgroundColor="grey"
+			backgroundImage="url(images/axe_2_001.png)"
 			break;
 
 			case 5:
-			backgroundColor="yellow"
+			backgroundImage="url(images/gargoyle.png)"
 			break;
 
 			case 6:
-			backgroundColor="blue"
+			backgroundImage="url(images/door.png)"
 			break;
 
 			case 7:
@@ -42,9 +41,11 @@ var Square = React.createClass({
 		backgroundColor="black"
 	}
 		var mystyle={
-			background:backgroundColor,
-			width:'15px',
-			height:'15px',
+			backgroundImage:backgroundImage,
+			backgroundColor:backgroundColor,
+			backgroundSize:'100%',
+			width:'32px',
+			height:'32px',
 			display: 'inline-block',
 		}
 		return <div style={mystyle} className="square"></div>

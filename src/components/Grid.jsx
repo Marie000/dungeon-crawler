@@ -14,12 +14,14 @@ var Grid = React.createClass({
             potions:5,
             currentRow:0,
             currentCol:0,
-            health:50,
+            health:100,
             experience:0,
             strength:10,
-            enemyStrength:10,
+            enemyStrength:12,
             enemyHealth:10,
-            level:1
+            level:1,
+            bossHealth:30,
+            playerLevel:1
 		}
 	},
     createMap:function(){
@@ -190,26 +192,33 @@ var Grid = React.createClass({
         }
         //if space is empty, move there
         switch(array[targetRow][targetCol]){
+            //open space
             case 1:
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
             this.setState({currentCol:targetCol,currentRow:targetRow,array:array})
             break;
 
+            //potion
             case 3:
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
             var newhealth = this.state.health+30
+            if(newhealth>100){
+                newhealth = 100;
+            }
             this.setState({currentCol:targetCol,currentRow:targetRow,array:array,health:newhealth})
             break;
 
+            //new weapon
             case 4:
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
-            var newstrength = this.state.strength+10
+            var newstrength = this.state.strength+5
             this.setState({currentCol:targetCol,currentRow:targetRow,array:array,strength:newstrength})
             break;   
 
+            //enemy
             case 5:
             var battleStrength = Math.floor(Math.random()*(this.state.strength+1))+this.state.strength;
             var enemyDefense = Math.floor(Math.random()*(this.state.enemyStrength+1))+this.state.enemyStrength;
@@ -221,8 +230,15 @@ var Grid = React.createClass({
                     array[currentRow].splice(currentCol,1,1)
                     array[targetRow].splice(targetCol,1,2)
                     var newExp=this.state.experience+10
+                    var newPlayerLevel=Math.floor(newExp/50)+1
+                    var newStrength = this.state.strength;
+                    var strength = this.state.strength
+                    if(newPlayerLevel>this.state.playerLevel){
+                        newStrength = strength + 10
+                    }
                     this.setState({currentCol:targetCol,currentRow:targetRow,array:array,
-                        experience:newExp,enemyHealth:10})
+                        experience:newExp,enemyHealth:10,playerLevel:newPlayerLevel,strength:newStrength})
+
                 }
             }
             if(battleOutcome<0){
@@ -234,15 +250,37 @@ var Grid = React.createClass({
             }
             break;
 
+            //portal (on level 1 and 2)
             case 6:
             var newLevel = this.state.level+1
-            var newEnemyStrength = this.state.enemyStrength+5;
+            var newEnemyStrength = this.state.enemyStrength+15;
             var newEnemies = this.state.enemies+2;
             var newPotions = this.state.potions-1;
             this.setState({level:newLevel,enemyStrength:newEnemyStrength,enemies:newEnemies,potions:newPotions})
             this.createMap();
             break;
 
+            //big boss (on level 3)
+            case 7:
+            var battleStrength = Math.floor(Math.random()*(this.state.strength+1))+this.state.strength;
+            var enemyDefense = Math.floor(Math.random()*(this.state.enemyStrength+1))+this.state.enemyStrength;
+            var battleOutcome=battleStrength-enemyDefense;
+            if(battleOutcome>0){
+                newBossHealth=this.state.bossHealth-battleOutcome;
+                this.setState({bossHealth:newBossHealth});
+                if(this.state.bossHealth<=0){
+                    alert('you win!')
+                }
+            }
+            if(battleOutcome<0){
+                newHealth=this.state.health+battleOutcome;
+                this.setState({health:newHealth});
+                if(this.state.health<=0){
+                    alert("game over!")
+                }
+            }
+
+            break;
             }
     },
 	render: function(){
@@ -253,13 +291,13 @@ var Grid = React.createClass({
         return <div className="squareRow" >
             {item.map(function(y,index){
                 var newId=xindex.toString()+"-"+index.toString();
-                var visibility=false;
+                var visibility=true;
                 var verticalDistance = xindex-currentRow;
                 var horizontalDistance = index-currentCol;
-                if((verticalDistance<5 && verticalDistance>-5)&&(horizontalDistance<5&&horizontalDistance>-5)){
-                    visibility=true;
-                }
+
+                if((verticalDistance<8 && verticalDistance>-8)&&(horizontalDistance<8&&horizontalDistance>-8)){
                 return <Square key={newId} identification={newId} className="square" value={y} visibility={visibility}/>    
+                }
         })}</div>
     });
 
@@ -267,7 +305,8 @@ var Grid = React.createClass({
         <h2>player health: {this.state.health}</h2>
         <h2>player strength: {this.state.strength}</h2>
         <h2>enemy health: {this.state.enemyHealth}</h2>
-        <h2>Level: {this.state.level}</h2>
+        <h2>XP: {this.state.experience}</h2>
+        <h2>Player Level: {this.state.playerLevel}</h2>
         {generateSquares}</div>
 	}
 })
