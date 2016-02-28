@@ -11,6 +11,7 @@ var Grid = React.createClass({
 	getInitialState:function(){
 		return {
 			array: [],
+            character:'',
 			height:30,
 			width:30,
             enemies:5,
@@ -174,18 +175,33 @@ var Grid = React.createClass({
 
         })
     },
+    startPrincess:function(){
+        this.setState({
+            character:'princess',experience:0,playerLevel:1,strength:10
+        })
+        this.startGame()
+    },
+    startSoldier:function(){
+        this.setState({
+            character:'soldier',experience:50,playerLevel:2,strength:20
+        })
+        this.startGame()
+    },
+    startWizard:function(){
+        this.setState({
+            character:'wizard',experience:0,playerLevel:1,strength:15
+        })
+        this.startGame()
+    },
     startGame:function(){
         this.setState({
             stage:'game',
             health:100,
-            experience:0,
-            strength:10,
             enemyStrength:12,
             enemyHealth:10,
             level:1,
             bossStrength:80,
             bossHealth:30,
-            playerLevel:1,
             weapon:'knife'
         })
     },
@@ -225,8 +241,13 @@ var Grid = React.createClass({
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
             var newhealth = this.state.health+30
-            if(newhealth>100){
-                newhealth = 100;
+            var maxHealth=100;
+            if(this.state.character==='princess'){
+                maxHealth=120;
+                newhealth+=10;
+            }
+            if(newhealth>maxHealth){
+                newhealth = maxHealth;
             }
             this.setState({currentCol:targetCol,currentRow:targetRow,array:array,health:newhealth})
             break;
@@ -236,6 +257,9 @@ var Grid = React.createClass({
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
             var newstrength = this.state.strength+5
+            if(this.state.character==='wizard'){
+                newStrength+=5;
+            }
             var newWeapon;
             switch(this.state.level){
                 case 1:
@@ -258,6 +282,9 @@ var Grid = React.createClass({
             var battleStrength = Math.floor(Math.random()*(this.state.strength+1))+this.state.strength;
             var enemyDefense = Math.floor(Math.random()*(this.state.enemyStrength+1))+this.state.enemyStrength;
             var battleOutcome=battleStrength-enemyDefense;
+            if(battleOutcome<0 && this.state.character==='princess'){
+                battleOutcome=battleOutcome-(battleOutcome*0.4)
+            }
             if(battleOutcome>0){
                 newEnemyHealth=this.state.enemyHealth-battleOutcome;
                 this.setState({enemyHealth:newEnemyHealth});
@@ -322,6 +349,7 @@ var Grid = React.createClass({
         var currentRow = this.state.currentRow;
         var currentCol = this.state.currentCol;
         var level = this.state.level;
+        var character=this.state.character;
         var generateSquares = this.state.array.map(function(item,index){
         var xindex = index;
         return <div className="squareRow" >
@@ -334,7 +362,7 @@ var Grid = React.createClass({
                     visibility=true;
                 }
                 if((verticalDistance<6)&&(horizontalDistance<6)){
-                return <Square key={newId} identification={newId} className="square" value={y} 
+                return <Square character={character} key={newId} identification={newId} className="square" value={y} 
                 visibility={visibility} level={level}/>    
                 }
         })}</div>
@@ -344,9 +372,24 @@ switch(this.state.stage){
     case 'before':
      return <div className="display">
     <h1>Dungeon Crawler</h1>
-    <h2>Welcome to my game!</h2>
-    <div className="button">
-    <button onClick={this.startGame}>Start Game</button>
+        <h2>Welcome to my game!</h2>
+        <div className="button">
+            <h3>Please choose your character:</h3>
+                <h4>Princess</h4>
+                    <img src="images/princess_attack_003.png" />
+                       <p>Higher maximum health<br/>
+                        Less health damage from enemies<br/>
+                        Potions more effective</p>
+                     <button onClick={this.startPrincess}>Choose Princess</button>
+                <h5>Soldier</h5>
+                    <img src="images/soldier.png" />
+                        <p>Starts at player level 2</p>
+                    
+                     <button onClick={this.startSoldier}>Choose Soldier</button>
+                <h5>Wizard</h5>
+                    <img src="images/wizard.png" />
+                        <p>All weapons are magic (extra damage)</p>
+                    <button onClick={this.startWizard}>Choose Wizard</button>
     </div>
     </div>
     break;
@@ -356,9 +399,9 @@ switch(this.state.stage){
             <h1>Dungeon Crawler</h1>
             <h2>Dungeon Level {this.state.level}</h2>
         <div className="header">
-        Health: <Health health={this.state.health} />
+        Health: <Health health={this.state.health} character={this.state.character}/>
         <Level level={this.state.playerLevel} />
-        <Weapon weapon={this.state.weapon} />
+        <Weapon weapon={this.state.weapon} character={this.state.character}/>
         </div>
         <div className="grid">
         {generateSquares}

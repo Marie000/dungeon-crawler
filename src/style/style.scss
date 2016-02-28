@@ -1,5 +1,4 @@
 body{
-	background:black;
 	color:white;
 	font-family: 'VT323' ;
 	padding:20px;
@@ -13,11 +12,12 @@ h2{
 	padding:10px;
 }
 .header{
-	margin: 20px;
+	padding: 20px;
 }
 .display{
-	margin: 20px;
+	padding: 20px;
 	width:500px;
+	background:black;
 }
 .grid{
 	display:block;

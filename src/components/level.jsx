@@ -48,6 +48,19 @@ var Level = React.createClass({
 			</span>
 			break;
 
+			case 6:
+			return<span className="level">
+			Player Level:
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+
+			</span>
+			break;
+
 		}
 
 	}

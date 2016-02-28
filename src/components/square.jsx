@@ -5,6 +5,7 @@ var Square = React.createClass({
 			var level=this.props.level;
 			var backgroundColor='tan';
 			var backgroundImage;
+			var character=this.props.character;
 			if(this.props.visibility){
 				switch(this.props.value){
 			case 0:
@@ -14,7 +15,19 @@ var Square = React.createClass({
 
 
 			case 2:
-			backgroundImage="url(images/princess_attack_003.png)"
+			switch(character){
+				case 'princess':
+				backgroundImage="url(images/princess_attack_003.png)"
+				break;
+
+				case 'soldier':
+				backgroundImage="url(images/soldier.png)"
+				break;
+
+				case 'wizard':
+				backgroundImage="url(images/wizard.png)"
+				break;
+			}
 			break;
 
 			case 3:
