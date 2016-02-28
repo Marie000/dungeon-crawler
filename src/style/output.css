@@ -1,9 +1,57 @@
+body {
+  background: black;
+  color: white;
+  font-family: "VT323";
+  padding: 20px; }
+
+h1 {
+  text-align: center;
+  padding: 10px; }
+
+h2 {
+  text-align: center;
+  padding: 10px; }
+
+.header {
+  margin: 20px; }
+
+.display {
+  margin: 20px;
+  width: 500px; }
+
+.grid {
+  display: block;
+  text-align: center; }
+
 .squareRow {
   padding: 0;
   margin: 0; }
 
 .square {
   padding: 0;
-  margin: -5px 0; }
+  margin: -3px 0; }
+
+.health {
+  padding: 10px; }
+
+.level {
+  display: block;
+  float: right; }
+
+.button {
+  display: block;
+  text-align: center; }
+
+button {
+  font-family: "VT323";
+  font-size: 15px;
+  background: black;
+  border: white solid 2px;
+  color: white;
+  padding: 5px; }
+
+button:hover {
+  background: white;
+  color: black; }
 
 /*# sourceMappingURL=output.css.map */

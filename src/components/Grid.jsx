@@ -5,6 +5,7 @@ var Actions = require ('../reflux/actions.jsx');
 var DungeonStore = require ('../reflux/dungeon-store.jsx');
 var Health = require ('./health.jsx');
 var Level = require ('./level.jsx');
+var Weapon = require ('./weapon.jsx');
 
 var Grid = React.createClass({
 	getInitialState:function(){
@@ -22,9 +23,11 @@ var Grid = React.createClass({
             enemyStrength:12,
             enemyHealth:10,
             level:1,
-            bossStrength:60,
+            bossStrength:80,
             bossHealth:30,
-            playerLevel:1
+            playerLevel:1,
+            weapon:'knife',
+            stage:'before'
 		}
 	},
     createMap:function(){
@@ -171,6 +174,21 @@ var Grid = React.createClass({
 
         })
     },
+    startGame:function(){
+        this.setState({
+            stage:'game',
+            health:100,
+            experience:0,
+            strength:10,
+            enemyStrength:12,
+            enemyHealth:10,
+            level:1,
+            bossStrength:80,
+            bossHealth:30,
+            playerLevel:1,
+            weapon:'knife'
+        })
+    },
     move:function(direction){
         var array = this.state.array;
         var currentRow=this.state.currentRow;
@@ -218,7 +236,21 @@ var Grid = React.createClass({
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
             var newstrength = this.state.strength+5
-            this.setState({currentCol:targetCol,currentRow:targetRow,array:array,strength:newstrength})
+            var newWeapon;
+            switch(this.state.level){
+                case 1:
+                newWeapon="sword";
+                break;
+
+                case 2:
+                newWeapon="mace"
+                break;
+
+                case 3:
+                newWeapon="axe"
+                break;
+            }
+            this.setState({weapon:newWeapon,currentCol:targetCol,currentRow:targetRow,array:array,strength:newstrength})
             break;   
 
             //enemy
@@ -248,7 +280,7 @@ var Grid = React.createClass({
                 newHealth=this.state.health+battleOutcome;
                 this.setState({health:newHealth});
                 if(this.state.health<=0){
-                    alert("game over!")
+                    this.setState({stage:'lost'})
                 }
             }
             break;
@@ -256,7 +288,7 @@ var Grid = React.createClass({
             //portal (on level 1 and 2)
             case 6:
             var newLevel = this.state.level+1
-            var newEnemyStrength = this.state.enemyStrength+15;
+            var newEnemyStrength = this.state.enemyStrength+16;
             var newEnemies = this.state.enemies+2;
             var newPotions = this.state.potions-1;
             this.setState({level:newLevel,enemyStrength:newEnemyStrength,enemies:newEnemies,potions:newPotions})
@@ -272,14 +304,14 @@ var Grid = React.createClass({
                 newBossHealth=this.state.bossHealth-battleOutcome;
                 this.setState({bossHealth:newBossHealth});
                 if(this.state.bossHealth<=0){
-                    alert('you win!')
+                    this.setState({stage:'win'})
                 }
             }
             if(battleOutcome<0){
                 newHealth=this.state.health+battleOutcome;
                 this.setState({health:newHealth});
                 if(this.state.health<=0){
-                    alert("game over!")
+                    this.setState({stage:'lost'})
                 }
             }
 
@@ -301,17 +333,63 @@ var Grid = React.createClass({
                 if(horizontalDistance+verticalDistance<5){
                     visibility=true;
                 }
-                if((verticalDistance<8)&&(horizontalDistance<8)){
+                if((verticalDistance<6)&&(horizontalDistance<6)){
                 return <Square key={newId} identification={newId} className="square" value={y} 
                 visibility={visibility} level={level}/>    
                 }
         })}</div>
     });
+//game stage
+switch(this.state.stage){
+    case 'before':
+     return <div className="display">
+    <h1>Dungeon Crawler</h1>
+    <h2>Welcome to my game!</h2>
+    <div className="button">
+    <button onClick={this.startGame}>Start Game</button>
+    </div>
+    </div>
+    break;
 
-		return <div className="display">
-        <Health health={this.state.health} />
+    case 'game':
+    return <div className="display">
+            <h1>Dungeon Crawler</h1>
+            <h2>Dungeon Level {this.state.level}</h2>
+        <div className="header">
+        Health: <Health health={this.state.health} />
         <Level level={this.state.playerLevel} />
-        {generateSquares}</div>
+        <Weapon weapon={this.state.weapon} />
+        </div>
+        <div className="grid">
+        {generateSquares}
+        </div>
+        </div>
+        break;
+
+    case 'win':
+    return <div className="display">
+            <h1>Dungeon Crawler</h1>
+            <h2>You win!</h2>
+            <div className="button">
+               <button onClick={this.startGame}>Play again!</button>
+            </div>
+        </div>
+    break;
+
+    case 'lost':
+    return <div className="display">
+    <h1>Dungeon Crawler</h1>
+    <h2>You are dead!</h2>
+    <div clasName="button">
+    <button onClick={this.startGame}>Play again!</button>
+    </div>
+    </div>
+    break;
+}
+
+
+
+
 	}
 })
 
