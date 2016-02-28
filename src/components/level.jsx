@@ -61,6 +61,69 @@ var Level = React.createClass({
 			</span>
 			break;
 
+			case 7:
+			return<span className="level">
+			Player Level:
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+
+
+			</span>
+			break;
+
+			case 8:
+			return<span className="level">
+			Player Level:
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+
+			</span>
+			break;
+
+			case 9:
+			return<span className="level">
+			Player Level:
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+
+			</span>
+			break;
+
+						case 10:
+			return<span className="level">
+			Player Level:
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+			<img src='images/star.png' /> 
+
+			</span>
+			break;
+
 		}
 
 	}

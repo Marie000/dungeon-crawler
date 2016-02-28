@@ -3,8 +3,31 @@ var React = require ('react');
 var Health = React.createClass({
 	render:function(){
 		var health=Math.floor(this.props.health/10);
+		if(this.props.nearDragon){
+			health=Math.floor(this.props.health/5)
+		}
+		if(this.props.character==='enemy'){
+			switch(this.props.level){
+				case 1:
+				health=this.props.health
+				break;
+
+				case 2:
+				health=Math.floor(this.props.health/2)
+				break;
+
+				case 3:
+				health=Math.floor(this.props.health/2)
+				break;
+			}
+		}
+
 		var healthDisplay;
 		var character=this.props.character;
+		if(this.props.character==='enemy' && this.props.near===false && this.props.nearDragon===false){
+			return <span></span>
+		}
+		else {
 		switch(health){
 			case 0:
 			if(character==='princess'){
@@ -286,7 +309,7 @@ var Health = React.createClass({
 			</span>
 			break;	
 		}
-
+	}
 	}
 })
 
