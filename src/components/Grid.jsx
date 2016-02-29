@@ -16,7 +16,7 @@ var Grid = React.createClass({
             nearEnemy:false,
 			width:30,
             enemies:8,
-            potions:5,
+            potions:8,
             currentRow:0,
             currentCol:0,
             health:100,
@@ -25,7 +25,7 @@ var Grid = React.createClass({
             enemyStrength:20,
             enemyHealth:10,
             level:1,
-            bossStrength:80,
+            bossStrength:70,
             bossHealth:30,
             playerLevel:1,
             weapon:'knife',
@@ -206,6 +206,8 @@ var Grid = React.createClass({
             level:1,
             bossStrength:80,
             bossHealth:50,
+            enemies:8,
+            potions:8,
             weapon:'knife'
         })
         this.createMap()
@@ -247,7 +249,7 @@ var Grid = React.createClass({
             case 3:
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
-            var newhealth = this.state.health+40
+            var newhealth = this.state.health+50
             var maxHealth=100;
             if(this.state.character==='princess'){
                 maxHealth=120;
@@ -322,7 +324,7 @@ var Grid = React.createClass({
             //portal (on level 1 and 2)
             case 6:
             var newLevel = this.state.level+1
-            var newEnemyStrength = this.state.enemyStrength+22;
+            var newEnemyStrength = this.state.enemyStrength+15;
             var newEnemies = this.state.enemies+2;
             var newPotions = this.state.potions-1;
             var newEnemyHealth = 20;

@@ -4,7 +4,7 @@ var Health = React.createClass({
 	render:function(){
 		var health=Math.floor(this.props.health/10);
 		if(this.props.nearDragon){
-			health=Math.floor(this.props.health/5)
+			health=Math.floor(this.props.health/3)
 		}
 		if(this.props.character==='enemy'){
 			switch(this.props.level){
@@ -27,7 +27,6 @@ var Health = React.createClass({
 		if(this.props.character==='enemy' && this.props.near===false && this.props.nearDragon===false){
 			return <span className="health">
 			<img src='images/heart_empty.png' /> 
-			<img src='images/heart_empty.png' />
 			<img src='images/heart_empty.png' />
 			<img src='images/heart_empty.png' />
 			<img src='images/heart_empty.png' />
