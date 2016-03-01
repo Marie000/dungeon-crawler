@@ -22,10 +22,10 @@ var Grid = React.createClass({
             health:100,
             experience:0,
             strength:15,
-            enemyStrength:20,
+            enemyStrength:30,
             enemyHealth:10,
             level:1,
-            bossStrength:70,
+            bossStrength:100,
             bossHealth:30,
             playerLevel:1,
             weapon:'knife',
@@ -181,7 +181,7 @@ var Grid = React.createClass({
     },
     startPrincess:function(){
         this.setState({
-            character:'princess',experience:0,playerLevel:1,strength:17
+            character:'princess',experience:0,playerLevel:1,strength:15
         })
         this.startGame()
     },
@@ -193,7 +193,7 @@ var Grid = React.createClass({
     },
     startWizard:function(){
         this.setState({
-            character:'wizard',experience:0,playerLevel:1,strength:20
+            character:'wizard',experience:0,playerLevel:1,strength:15
         })
         this.startGame()
     },
@@ -201,11 +201,11 @@ var Grid = React.createClass({
         this.setState({
             stage:'game',
             health:100,
-            enemyStrength:20,
+            enemyStrength:25,
             enemyHealth:10,
             level:1,
-            bossStrength:80,
-            bossHealth:50,
+            bossStrength:100,
+            bossHealth:70,
             enemies:8,
             potions:8,
             weapon:'knife'
@@ -288,37 +288,39 @@ var Grid = React.createClass({
 
             //enemy
             case 5:
-            var battleStrength = Math.floor(Math.random()*(this.state.strength+1))+this.state.strength;
-            var enemyDefense = Math.floor(Math.random()*(this.state.enemyStrength+1))+this.state.enemyStrength;
-            var battleOutcome=battleStrength-enemyDefense;
-            if(battleOutcome<0 && this.state.character==='princess'){
-                battleOutcome=battleOutcome-(battleOutcome*0.4)
-            }
-            if(battleOutcome>0){
-                newEnemyHealth=this.state.enemyHealth-battleOutcome;
-                this.setState({enemyHealth:newEnemyHealth});
-                if(this.state.enemyHealth<=0){
-                    array[currentRow].splice(currentCol,1,1)
-                    array[targetRow].splice(targetCol,1,2)
-                    var newExp=this.state.experience+10
-                    var newPlayerLevel=Math.floor(newExp/50)+1
-                    var newStrength = this.state.strength;
-                    var strength = this.state.strength
-                    if(newPlayerLevel>this.state.playerLevel){
-                        newStrength = strength + 5
-                    }
-                    this.setState({currentCol:targetCol,currentRow:targetRow,array:array,
-                        experience:newExp,enemyHealth:10,playerLevel:newPlayerLevel,strength:newStrength})
+            var enemyDamage = Math.floor(Math.random()*(this.state.strength+1)/2);
+            var playerDamage = Math.floor(Math.random()*(this.state.enemyStrength+1)/2);
 
-                }
+            if(this.state.character==='princess'){
+                playerDamage=playerDamage*0.5
             }
-            if(battleOutcome<0){
-                newHealth=this.state.health+battleOutcome;
-                this.setState({health:newHealth});
-                if(this.state.health<=0){
+            var startingEnemyHealth
+            if(this.state.level===1){
+                startingEnemyHealth=10
+            }
+            else{
+                startingEnemyHealth=20;
+            }
+            newEnemyHealth = this.state.enemyHealth - enemyDamage;
+            newHealth = this.state.health - playerDamage;
+            this.setState({enemyHealth:newEnemyHealth,health:newHealth})
+            if(this.state.enemyHealth<=0){
+                array[targetRow].splice(targetCol,1,1)                
+                var newExp=this.state.experience+10
+                var newPlayerLevel=Math.floor(newExp/50)+1
+                var newStrength = this.state.strength;
+                var strength = this.state.strength
+                if(newPlayerLevel>this.state.playerLevel){
+                    newStrength = strength + 5
+                }
+                this.setState({array:array,experience:newExp,enemyHealth:startingEnemyHealth,
+                    playerLevel:newPlayerLevel,strength:newStrength})
+
+
+            }
+            if(this.state.health<=0){
                     this.setState({stage:'lost'})
                 }
-            }
             break;
 
             //portal (on level 1 and 2)
@@ -327,32 +329,29 @@ var Grid = React.createClass({
             var newEnemyStrength = this.state.enemyStrength+15;
             var newEnemies = this.state.enemies+2;
             var newPotions = this.state.potions-1;
-            var newEnemyHealth = 20;
-            this.setState({enemyHealth:newEnemyHealth,level:newLevel,enemyStrength:newEnemyStrength,enemies:newEnemies,potions:newPotions})
+            this.setState({enemyHealth:20,level:newLevel,enemyStrength:newEnemyStrength,enemies:newEnemies,potions:newPotions})
             this.createMap();
             break;
 
             //big boss (on level 3)
             case 7:
-            var battleStrength = Math.floor(Math.random()*(this.state.strength+1))+this.state.strength;
-            var enemyDefense = Math.floor(Math.random()*(this.state.bossStrength+1))+this.state.bossStrength;
-            var battleOutcome=battleStrength-enemyDefense;
-            if(battleOutcome>0){
-                newBossHealth=this.state.bossHealth-battleOutcome;
-                this.setState({bossHealth:newBossHealth});
-                if(this.state.bossHealth<=0){
-                    this.setState({stage:'win'})
-                }
+            var enemyDamage = Math.floor(Math.random()*(this.state.bossStrength+1)/2);
+            var playerDamage = Math.floor(Math.random()*(this.state.enemyStrength+1)/2);
+
+            if(this.state.character==='princess'){
+                playerDamage=playerDamage*0.5
             }
-            if(battleOutcome<0){
-                newHealth=this.state.health+battleOutcome;
-                this.setState({health:newHealth});
-                if(this.state.health<=0){
+            newEnemyHealth = this.state.bossHealth - enemyDamage;
+            newHealth = this.state.health - playerDamage;
+            this.setState({bossHealth:newEnemyHealth,health:newHealth})
+            if(this.state.bossHealth<=0){
+                     this.setState({stage:'win'})
+                }
+            if(this.state.health<=0){
                     this.setState({stage:'lost'})
                 }
-            }
-
             break;
+
             }
 
     },
@@ -449,7 +448,7 @@ switch(this.state.stage){
                     Health: <Health health={this.state.health} character={this.state.character}/>
                     <span className="enemyHealth">
                     Enemy Health:<Health health={this.state.enemyHealth} character='enemy' 
-                    near={nearEnemy} nearDragon={nearDragon} level={this.state.level}/>
+                    near={nearEnemy} nearDragon={nearDragon} dragonHealth={this.state.bossHealth} level={this.state.level}/>
                     </span>
                     <br />
                     <Level level={this.state.playerLevel} />

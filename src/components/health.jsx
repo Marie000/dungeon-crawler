@@ -4,9 +4,9 @@ var Health = React.createClass({
 	render:function(){
 		var health=Math.floor(this.props.health/10);
 		if(this.props.nearDragon){
-			health=Math.floor(this.props.health/3)
+			health=Math.floor(this.props.dragonHealth/7)
 		}
-		if(this.props.character==='enemy'){
+		if(this.props.character==='enemy' && this.props.nearDragon===false){
 			switch(this.props.level){
 				case 1:
 				health=this.props.health
