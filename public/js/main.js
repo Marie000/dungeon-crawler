@@ -20369,11 +20369,11 @@ var Grid = React.createClass({
             currentCol: 0,
             health: 100,
             experience: 0,
-            strength: 15,
+            strength: 12,
             enemyStrength: 30,
             enemyHealth: 10,
             level: 1,
-            bossStrength: 100,
+            bossStrength: 120,
             bossHealth: 30,
             playerLevel: 1,
             weapon: 'knife',
@@ -20527,19 +20527,19 @@ var Grid = React.createClass({
     },
     startPrincess: function () {
         this.setState({
-            character: 'princess', experience: 0, playerLevel: 1, strength: 15
+            character: 'princess', experience: 0, playerLevel: 1, strength: 12
         });
         this.startGame();
     },
     startSoldier: function () {
         this.setState({
-            character: 'soldier', experience: 50, playerLevel: 2, strength: 20
+            character: 'soldier', experience: 50, playerLevel: 2, strength: 17
         });
         this.startGame();
     },
     startWizard: function () {
         this.setState({
-            character: 'wizard', experience: 0, playerLevel: 1, strength: 15
+            character: 'wizard', experience: 0, playerLevel: 1, strength: 12
         });
         this.startGame();
     },
@@ -20550,7 +20550,7 @@ var Grid = React.createClass({
             enemyStrength: 25,
             enemyHealth: 10,
             level: 1,
-            bossStrength: 100,
+            bossStrength: 120,
             bossHealth: 70,
             enemies: 8,
             potions: 8,
@@ -20964,10 +20964,13 @@ var Health = React.createClass({
 			displayName: 'Health',
 
 			render: function () {
+						//character health
 						var health = Math.floor(this.props.health / 10);
+						//dragon health
 						if (this.props.nearDragon) {
 									health = Math.floor(this.props.dragonHealth / 7);
 						}
+						//enemy (not dragon) health
 						if (this.props.character === 'enemy' && this.props.nearDragon === false) {
 									switch (this.props.level) {
 												case 1:
@@ -20975,345 +20978,90 @@ var Health = React.createClass({
 															break;
 
 												case 2:
-															health = Math.floor(this.props.health / 2);
-															break;
-
 												case 3:
 															health = Math.floor(this.props.health / 2);
 															break;
 									}
 						}
-
-						var healthDisplay;
-						var character = this.props.character;
+						//enemy health: empty if no enemies near
 						if (this.props.character === 'enemy' && this.props.near === false && this.props.nearDragon === false) {
-									return React.createElement(
-												'span',
-												{ className: 'health' },
-												React.createElement('img', { src: 'images/heart_empty.png' }),
-												React.createElement('img', { src: 'images/heart_empty.png' }),
-												React.createElement('img', { src: 'images/heart_empty.png' }),
-												React.createElement('img', { src: 'images/heart_empty.png' }),
-												React.createElement('img', { src: 'images/heart_empty.png' })
-									);
-						} else {
-									switch (health) {
-												case 0:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															}
-															break;
-
-												case 1:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															}
-															break;
-
-												case 2:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															}
-															break;
-
-												case 3:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															}
-															break;
-
-												case 4:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															}
-															break;
-
-												case 5:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															}
-															break;
-
-												case 6:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															}
-
-															break;
-
-												case 7:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															}
-
-															break;
-
-												case 8:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_half.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_half.png' })
-																		);
-															}
-															break;
-
-												case 9:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-																		break;
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' })
-																		);
-															}
-															break;
-
-												case 10:
-															if (character === 'princess') {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_empty.png' })
-																		);
-															} else {
-																		return React.createElement(
-																					'span',
-																					{ className: 'health' },
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' }),
-																					React.createElement('img', { src: 'images/heart_full.png' })
-																		);
-															}
-															break;
-
-												case 11:
-															return React.createElement(
-																		'span',
-																		{ className: 'health' },
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' })
-															);
-															break;
-
-												case 12:
-															return React.createElement(
-																		'span',
-																		{ className: 'health' },
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' }),
-																		React.createElement('img', { src: 'images/heart_full.png' })
-															);
-															break;
-												default:
-															return React.createElement(
-																		'span',
-																		{ className: 'health' },
-																		React.createElement('img', { src: 'images/heart_empty.png' }),
-																		React.createElement('img', { src: 'images/heart_empty.png' }),
-																		React.createElement('img', { src: 'images/heart_empty.png' }),
-																		React.createElement('img', { src: 'images/heart_empty.png' }),
-																		React.createElement('img', { src: 'images/heart_empty.png' })
-															);
-															break;
-									}
+									health = 0;
 						}
+
+						//define the display (0 for empty heart, 1 for half heart, 2 for full)
+						var healthDisplay = [0, 0, 0, 0, 0];
+						switch (health) {
+									case 1:
+												healthDisplay = [1, 0, 0, 0, 0];
+												break;
+
+									case 2:
+												healthDisplay = [2, 0, 0, 0, 0];
+												break;
+
+									case 3:
+												healthDisplay = [2, 1, 0, 0, 0];
+												break;
+
+									case 4:
+												healthDisplay = [2, 2, 0, 0, 0];
+												break;
+
+									case 5:
+												healthDisplay = [2, 2, 1, 0, 0];
+												break;
+
+									case 6:
+												healthDisplay = [2, 2, 2, 0, 0];
+												break;
+
+									case 7:
+												healthDisplay = [2, 2, 2, 1, 0];
+												break;
+
+									case 8:
+												healthDisplay = [2, 2, 2, 2, 0];
+												break;
+
+									case 9:
+												healthDisplay = [2, 2, 2, 2, 1];
+												break;
+
+									case 10:
+												healthDisplay = [2, 2, 2, 2, 2];
+												break;
+
+									case 11:
+												healthDisplay = [2, 2, 2, 2, 2, 1];
+												break;
+
+									case 12:
+												healthDisplay = [2, 2, 2, 2, 2, 2];
+												break;
+						}
+
+						if (this.props.character === 'princess' && health < 11) {
+									healthDisplay.push(0);
+						}
+
+						return React.createElement(
+									'span',
+									{ className: 'health' },
+									healthDisplay.map(function (item) {
+												switch (item) {
+															case 0:
+																		return React.createElement('img', { src: 'images/heart_empty.png' });
+																		break;
+
+															case 1:
+																		return React.createElement('img', { src: 'images/heart_half.png' });
+																		break;
+
+															case 2:
+																		return React.createElement('img', { src: 'images/heart_full.png' });
+												}
+									})
+						);
 			}
 });
 
@@ -21326,6 +21074,19 @@ var Level = React.createClass({
 			displayName: 'Level',
 
 			render: function () {
+
+						/*
+      var level = this.props.level;
+      var stars = function(){
+      	for(var x=0;x<level;x++){
+      		return <img src='images/star.png' />
+      	} 			
+      }
+      return <span className="level">
+      	Player Level:{stars()}
+      	</span>
+      */
+
 						switch (this.props.level) {
 									case 1:
 												return React.createElement(

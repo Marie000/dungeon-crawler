@@ -21,11 +21,11 @@ var Grid = React.createClass({
             currentCol:0,
             health:100,
             experience:0,
-            strength:15,
+            strength:12,
             enemyStrength:30,
             enemyHealth:10,
             level:1,
-            bossStrength:100,
+            bossStrength:120,
             bossHealth:30,
             playerLevel:1,
             weapon:'knife',
@@ -181,19 +181,19 @@ var Grid = React.createClass({
     },
     startPrincess:function(){
         this.setState({
-            character:'princess',experience:0,playerLevel:1,strength:15
+            character:'princess',experience:0,playerLevel:1,strength:12
         })
         this.startGame()
     },
     startSoldier:function(){
         this.setState({
-            character:'soldier',experience:50,playerLevel:2,strength:20
+            character:'soldier',experience:50,playerLevel:2,strength:17
         })
         this.startGame()
     },
     startWizard:function(){
         this.setState({
-            character:'wizard',experience:0,playerLevel:1,strength:15
+            character:'wizard',experience:0,playerLevel:1,strength:12
         })
         this.startGame()
     },
@@ -204,7 +204,7 @@ var Grid = React.createClass({
             enemyStrength:25,
             enemyHealth:10,
             level:1,
-            bossStrength:100,
+            bossStrength:120,
             bossHealth:70,
             enemies:8,
             potions:8,

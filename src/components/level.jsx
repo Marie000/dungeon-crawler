@@ -1,7 +1,21 @@
 var React = require ('react');
 
 var Level = React.createClass({
+
 	render:function(){
+
+		/*
+		var level = this.props.level;
+		var stars = function(){
+			for(var x=0;x<level;x++){
+				return <img src='images/star.png' />
+			} 			
+		}
+		return <span className="level">
+			Player Level:{stars()}
+			</span>
+*/
+
 		switch(this.props.level){
 			case 1:
 			return<span className="level">
@@ -125,7 +139,6 @@ var Level = React.createClass({
 			break;
 
 		}
-
 	}
 })
 
