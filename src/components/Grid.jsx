@@ -1,8 +1,5 @@
 var React = require('react');
 var Square = require('./square.jsx');
-var Reflux = require ('reflux');
-var Actions = require ('../reflux/actions.jsx');
-var DungeonStore = require ('../reflux/dungeon-store.jsx');
 var Health = require ('./health.jsx');
 var Level = require ('./level.jsx');
 var Weapon = require ('./weapon.jsx');
@@ -25,7 +22,7 @@ var Grid = React.createClass({
             enemyStrength:30,
             enemyHealth:10,
             level:1,
-            bossStrength:120,
+            bossStrength:140,
             bossHealth:30,
             playerLevel:1,
             weapon:'knife',
@@ -44,12 +41,13 @@ var Grid = React.createClass({
         var stateWidth = this.state.width;
         var stateHeight = this.state.height;
         var randomPoints = []
+        //create room at random 
         var createRoom = function(){
             var height=Math.floor(Math.random()*10)+5;
             var width=Math.floor(Math.random()*10)+5;
             var startRow=Math.floor(Math.random()*(stateHeight-height+1))+1
             var startCol=Math.floor(Math.random()*(stateWidth-width+1))+1
-           //check if spot is available
+           //check if spot is available (if not, nothing happens)
            var test =0;
             for (var row=startRow; row<startRow+height; row++){
                 for (var col=startCol; col<startCol+width; col++){
@@ -76,10 +74,11 @@ var Grid = React.createClass({
                 randomPoints.push(list[random])
             }
         }
+        //make 100 attempts at creating rooms
         for (x=0;x<100;x++){
             createRoom() 
         }
-        //create hallways between randomPoints
+        //create hallways between first two points
         var createHallways = function(){
             var beginCol = randomPoints[0][1]
             var endCol = randomPoints[1][1]
@@ -97,6 +96,7 @@ var Grid = React.createClass({
             for (var row=beginRow;row>endRow;row--){
                 array[row].splice(endCol,1,1);
             }
+            //remove first point from list, repeat function until one point left
             randomPoints.splice(0,1)
             if(randomPoints.length>1){
                 createHallways()
@@ -104,6 +104,7 @@ var Grid = React.createClass({
         }
         createHallways();
         //set up player and items
+        //choose random open stop function
         var randomOpenSpot = function(newValue){
             var openSpots = []
             for (var col=0;col<stateWidth;col++){
@@ -134,22 +135,23 @@ var Grid = React.createClass({
         for (var x=0;x<this.state.potions;x++){
             randomOpenSpot(3);
         }
-        //set up weapons
+        //set up weapon
         randomOpenSpot(4);
         //set up enemies
         for (var x=0;x<this.state.enemies;x++){
             randomOpenSpot(5);
         }        
-        //set up portal
+        //set up portal level 1 and 2
         if(this.state.level<3){
         randomOpenSpot(6)
         }
-        //set up big boss
+        //set up big boss level 3
         if(this.state.level===3){
             randomOpenSpot(7)
         }
         this.setState({array:array})
     },
+    //initial map create
 	componentWillMount:function(){
         this.createMap();
     },
@@ -197,6 +199,7 @@ var Grid = React.createClass({
         })
         this.startGame()
     },
+    //reset initial states for new game (repeated -- need to fix)
     startGame:function(){
         this.setState({
             stage:'game',
@@ -204,7 +207,7 @@ var Grid = React.createClass({
             enemyStrength:25,
             enemyHealth:10,
             level:1,
-            bossStrength:120,
+            bossStrength:140,
             bossHealth:70,
             enemies:8,
             potions:8,
@@ -217,7 +220,7 @@ var Grid = React.createClass({
         var currentRow=this.state.currentRow;
         var currentCol=this.state.currentCol;
         var nearEnemy=false;
-        
+        //define the target point
         var targetCol;
         var targetRow;
         if(direction==="up"){
@@ -236,16 +239,16 @@ var Grid = React.createClass({
             targetRow=currentRow;
             targetCol=currentCol+1;
         }
-        //if space is empty, move there
+        //what to do depending on what is there
         switch(array[targetRow][targetCol]){
-            //open space
+            //open space - move there
             case 1:
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
             this.setState({currentCol:targetCol,currentRow:targetRow,array:array})
             break;
 
-            //potion
+            //potion - increase health, move there
             case 3:
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
@@ -261,7 +264,7 @@ var Grid = React.createClass({
             this.setState({currentCol:targetCol,currentRow:targetRow,array:array,health:newhealth})
             break;
 
-            //new weapon
+            //new weapon - change weapon, increase strength, move there
             case 4:
             array[currentRow].splice(currentCol,1,1)
             array[targetRow].splice(targetCol,1,2)
@@ -286,8 +289,10 @@ var Grid = React.createClass({
             this.setState({weapon:newWeapon,currentCol:targetCol,currentRow:targetRow,array:array,strength:newstrength})
             break;   
 
-            //enemy
+            //enemy - battle 
             case 5:
+
+            //define battle outcome (in terms of health)
             var enemyDamage = Math.floor(Math.random()*(this.state.strength+1)/2);
             var playerDamage = Math.floor(Math.random()*(this.state.enemyStrength+1)/2);
 
@@ -304,6 +309,8 @@ var Grid = React.createClass({
             newEnemyHealth = this.state.enemyHealth - enemyDamage;
             newHealth = this.state.health - playerDamage;
             this.setState({enemyHealth:newEnemyHealth,health:newHealth})
+
+            //if enemy is dead - remove enemy, increase experience
             if(this.state.enemyHealth<=0){
                 array[targetRow].splice(targetCol,1,1)                
                 var newExp=this.state.experience+10
@@ -315,15 +322,14 @@ var Grid = React.createClass({
                 }
                 this.setState({array:array,experience:newExp,enemyHealth:startingEnemyHealth,
                     playerLevel:newPlayerLevel,strength:newStrength})
-
-
             }
+            //if player is dead
             if(this.state.health<=0){
                     this.setState({stage:'lost'})
                 }
             break;
 
-            //portal (on level 1 and 2)
+            //portal (on level 1 and 2) - change level, create new map
             case 6:
             var newLevel = this.state.level+1
             var newEnemyStrength = this.state.enemyStrength+15;
@@ -333,7 +339,7 @@ var Grid = React.createClass({
             this.createMap();
             break;
 
-            //big boss (on level 3)
+            //big boss (on level 3) - battle
             case 7:
             var enemyDamage = Math.floor(Math.random()*(this.state.bossStrength+1)/2);
             var playerDamage = Math.floor(Math.random()*(this.state.enemyStrength+1)/2);
@@ -344,9 +350,11 @@ var Grid = React.createClass({
             newEnemyHealth = this.state.bossHealth - enemyDamage;
             newHealth = this.state.health - playerDamage;
             this.setState({bossHealth:newEnemyHealth,health:newHealth})
+            //if dragon dead
             if(this.state.bossHealth<=0){
                      this.setState({stage:'win'})
                 }
+            //if player dead
             if(this.state.health<=0){
                     this.setState({stage:'lost'})
                 }
@@ -362,6 +370,7 @@ var Grid = React.createClass({
         var nearEnemy=false;
         var nearDragon=false;
         var array = this.state.array;
+        //define the neighbors
         var neighbors=[array[currentRow][currentCol-1],array[currentRow][currentCol+1]];
         if(array[currentRow+1]){
             neighbors.push(array[currentRow+1][currentCol])
@@ -369,6 +378,7 @@ var Grid = React.createClass({
         if(array[currentRow-1]){
             neighbors.push(array[currentRow-1][currentCol])
         }
+        //check if enemy in neighbors
         for(var x=0;x<neighbors.length;x++){
             if(neighbors[x]===5){
                 nearEnemy=true;
@@ -380,33 +390,35 @@ var Grid = React.createClass({
                 nearDragon=true;
             }
         }
-
-        //this.setState({nearEnemy:nearEnemy})
         var level = this.state.level;
         var character=this.state.character;
         var enemyHealth='';
         if(nearEnemy){
             enemyHealth="enemy health"
         }
+        //generate map 
         var generateSquares = this.state.array.map(function(item,index){
         var xindex = index;
 
         return <div className="squareRow">
             {item.map(function(y,index){
                 var newId=xindex.toString()+"-"+index.toString();
+                //visibility:not black
                 var visibility=false;
                 var verticalDistance = Math.abs(xindex-currentRow);
                 var horizontalDistance = Math.abs(index-currentCol);
                 if(horizontalDistance+verticalDistance<5){
                     visibility=true;
                 }
+                //only display a square  from 6 before to 6 after - horizontally and vertically (not same as visibility)
                 if((verticalDistance<6)&&(horizontalDistance<6)){
                 return <Square character={character} key={newId} identification={newId} className="square" value={y} 
                 visibility={visibility} level={level}/>    
                 }
         })}</div>
     });
-//game stage
+//game stages
+//before game
 switch(this.state.stage){
     case 'before':
      return <div className="display">
@@ -439,7 +451,7 @@ switch(this.state.stage){
     </div>
     </div>
     break;
-
+    //game stage
     case 'game':
     return <div className="display">
             <h1>Dungeon Crawler</h1>
@@ -460,7 +472,7 @@ switch(this.state.stage){
                 </div>
             </div>
         break;
-
+    //winning stage
     case 'win':
     return <div className="display">
                 <h1>Dungeon Crawler</h1>
@@ -471,7 +483,7 @@ switch(this.state.stage){
                 </div>
             </div>
     break;
-
+    //loosing stage
     case 'lost':
     return <div className="display">
                 <h1>Dungeon Crawler</h1>
